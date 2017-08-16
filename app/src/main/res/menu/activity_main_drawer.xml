@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_current_tasks"
+            android:icon="@drawable/ic_menu_tasks"
+            android:title="@string/navigation_current_tasks"/>
+        <item
+            android:id="@+id/nav_stats"
+            android:icon="@drawable/ic_menu_stats"
+            android:title="@string/navigation_stats"/>
+    </group>
+
+    <item android:title="@string/navigation_title_name_about">
+        <menu>
+            <item
+                android:id="@+id/nav_about_app"
+                android:icon="@drawable/ic_menu_about_app"
+                android:title="@string/navigaton_about_app"/>
+            <item
+                android:id="@+id/nav_about_me"
+                android:icon="@drawable/ic_menu_about_me"
+                android:title="@string/navigation_about_me"/>
+        </menu>
+    </item>
+
+</menu>
