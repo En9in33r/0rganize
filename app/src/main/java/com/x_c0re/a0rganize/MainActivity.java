@@ -24,9 +24,10 @@ public class MainActivity extends AppCompatActivity
 {
     private Fragment fragment;
     private FragmentManager manager;
-    private DrawerLayout mLeftMenu;
 
     private ImageButton mProfileButton;
+
+    public static String message;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -42,8 +43,11 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                FragmentTransaction transaction = manager.beginTransaction();
+                fragment = new NewTaskFragment();
+                transaction.replace(R.id.fragment, fragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
             }
         });
 
@@ -58,7 +62,7 @@ public class MainActivity extends AppCompatActivity
 
         manager = getSupportFragmentManager();
 
-        mProfileButton = (ImageButton)findViewById(R.id.imageButton3);
+        mProfileButton = navigationView.getHeaderView(0).findViewById(R.id.imageButton3);
         mProfileButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -66,14 +70,12 @@ public class MainActivity extends AppCompatActivity
             {
                 FragmentTransaction transaction = manager.beginTransaction();
                 fragment = new ProfileFragment();
-                transaction.replace(R.id.mainLayout, fragment);
+                transaction.replace(R.id.fragment, fragment);
                 transaction.addToBackStack(null);
                 transaction.commit();
             }
         });
     }
-
-
 
     @Override
     public void onBackPressed()
@@ -105,7 +107,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.action_settings:
                 FragmentTransaction transaction = manager.beginTransaction();
                 fragment = new SettingsFragment();
-                transaction.replace(R.id.mainLayout, fragment);
+                transaction.replace(R.id.fragment, fragment);
                 transaction.addToBackStack(null);
                 transaction.commit();
                 return true;
@@ -118,20 +120,23 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item)
     {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.nav_current_tasks)
         {
             FragmentTransaction transaction = manager.beginTransaction();
             fragment = new CurrentTasksFragment();
-            transaction.replace(R.id.mainLayout, fragment);
+            transaction.replace(R.id.fragment, fragment);
             transaction.addToBackStack(null);
             transaction.commit();
         }
         else if (id == R.id.nav_stats)
         {
-
+            FragmentTransaction transaction = manager.beginTransaction();
+            fragment = new StatsFragment();
+            transaction.replace(R.id.fragment, fragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
         }
         else if (id == R.id.nav_about_app)
         {
@@ -139,6 +144,8 @@ public class MainActivity extends AppCompatActivity
         }
         else if (id == R.id.nav_about_me)
         {
+            AboutMeFragment fragment = new AboutMeFragment();
+            fragment.show(manager, "dialog");
 
         }
 

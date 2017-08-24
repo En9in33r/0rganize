@@ -7,15 +7,22 @@ import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 
+import java.util.ArrayList;
 
-public class CurrentTasksFragment extends Fragment
+public class CurrentTasksFragment extends ListFragment
 {
-    @Nullable
+    public static ArrayList<String> data = new ArrayList<>();
+
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
+    public void onActivityCreated(@Nullable Bundle savedInstanceState)
     {
-        View view = inflater.inflate(R.layout.current_tasks_fragment, container, false);
-        return view;
+        super.onActivityCreated(savedInstanceState);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, data);
+
+        setListAdapter(adapter);
     }
+
+
 }

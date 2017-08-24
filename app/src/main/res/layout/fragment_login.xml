@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/loginFragmentLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/editTextPassword"
+        android:layout_width="313dp"
+        android:layout_height="66dp"
+        android:ems="10"
+        android:hint="Password"
+        android:inputType="textPassword"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextLogin"/>
+
+    <EditText
+        android:id="@+id/editTextLogin"
+        android:layout_width="313dp"
+        android:layout_height="66dp"
+        android:layout_marginTop="206dp"
+        android:ems="10"
+        android:hint="Login"
+        android:inputType="textPersonName"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/textViewSignIn"
+        android:layout_width="155dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Not registred yet? Sign in"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextPassword"
+        app:layout_constraintRight_toRightOf="parent"
+        />
+
+    <Button
+        android:id="@+id/buttonLogin"
+        android:layout_width="249dp"
+        android:layout_height="53dp"
+        android:layout_marginTop="8dp"
+        android:text="Log In"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewSignIn"/>
+</android.support.constraint.ConstraintLayout>

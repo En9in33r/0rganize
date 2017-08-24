@@ -5,22 +5,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.x_c0re.a0rganize.MainActivity"
-    tools:showIn="@layout/app_bar_main">
+    tools:context="com.x_c0re.a0rganize.AuthActivity">
 
     <fragment
-        android:id="@+id/fragment"
-        android:name="com.x_c0re.a0rganize.CurrentTasksFragment"
+        android:id="@+id/fragment2"
+        android:name="com.x_c0re.a0rganize.LoginFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        tools:layout="@layout/fragment_login"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:layout="@layout/current_tasks_fragment"/>
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="8dp"/>
 </android.support.constraint.ConstraintLayout>
