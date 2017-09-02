@@ -1,5 +1,7 @@
 package com.x_c0re.a0rganize;
 
+import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -52,6 +54,7 @@ public class MainActivity extends AppCompatActivity
         });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
@@ -104,12 +107,10 @@ public class MainActivity extends AppCompatActivity
     {
         switch (item.getItemId())
         {
-            case R.id.action_settings:
-                FragmentTransaction transaction = manager.beginTransaction();
-                fragment = new SettingsFragment();
-                transaction.replace(R.id.fragment, fragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
+            case R.id.action_about_app:
+                AboutMeFragment about = new AboutMeFragment();
+                about.show(manager, "drawer");
+
                 return true;
         }
 
@@ -120,37 +121,70 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item)
     {
-        int id = item.getItemId();
-
-        if (id == R.id.nav_current_tasks)
-        {
-            FragmentTransaction transaction = manager.beginTransaction();
-            fragment = new CurrentTasksFragment();
-            transaction.replace(R.id.fragment, fragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
-        }
-        else if (id == R.id.nav_stats)
-        {
-            FragmentTransaction transaction = manager.beginTransaction();
-            fragment = new StatsFragment();
-            transaction.replace(R.id.fragment, fragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
-        }
-        else if (id == R.id.nav_about_app)
-        {
-
-        }
-        else if (id == R.id.nav_about_me)
-        {
-            AboutMeFragment fragment = new AboutMeFragment();
-            fragment.show(manager, "dialog");
-
-        }
+        FragmentTransaction transaction = manager.beginTransaction();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+
+        switch (item.getItemId())
+        {
+            case (R.id.nav_wall_lounge):
+                fragment = new CourtLounge();
+                transaction.replace(R.id.fragment, fragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+
+                drawer.closeDrawers();
+                return true;
+            case (R.id.nav_stats):
+                fragment = new StatsFragment();
+                transaction.replace(R.id.fragment, fragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+
+                drawer.closeDrawers();
+                return true;
+            case (R.id.nav_settings):
+                fragment = new SettingsFragment();
+                transaction.replace(R.id.fragment, fragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+
+                drawer.closeDrawers();
+                return true;
+            case (R.id.nav_current_tasks):
+                fragment = new CurrentTasksFragment();
+                transaction.replace(R.id.fragment, fragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+
+                drawer.closeDrawers();
+                return true;
+            case (R.id.nav_in_a_forum):
+                fragment = new InAForumTasksFragment();
+                transaction.replace(R.id.fragment, fragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+
+                drawer.closeDrawers();
+                return true;
+            case (R.id.nav_done):
+                fragment = new CompletedTasksFragment();
+                transaction.replace(R.id.fragment, fragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+
+                drawer.closeDrawers();
+                return true;
+            case (R.id.nav_failed):
+                fragment = new FailedTasksFragment();
+                transaction.replace(R.id.fragment, fragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+
+                drawer.closeDrawers();
+                return true;
+        }
+
         return true;
     }
 }

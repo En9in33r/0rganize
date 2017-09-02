@@ -19,7 +19,8 @@
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
-        <activity android:name=".AuthActivity">
+        <activity android:name=".AuthActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -28,6 +29,12 @@
         </activity>
         <activity android:name=".SigninActivity">
         </activity>
+
+        <service
+            android:name=".StillInAccount"
+            android:enabled="true"
+            android:exported="true">
+        </service>
     </application>
 
 </manifest>

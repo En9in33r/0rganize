@@ -3,25 +3,40 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_current_tasks"
+            android:id="@+id/nav_wall_lounge"
             android:icon="@drawable/ic_menu_tasks"
-            android:title="@string/navigation_current_tasks"/>
+            android:title="@string/navigation_task_lounge"/>
         <item
             android:id="@+id/nav_stats"
-            android:icon="@drawable/ic_menu_stats"
+            android:icon="@drawable/ic_in_a_court"
             android:title="@string/navigation_stats"/>
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_settings"
+            android:title="@string/action_settings"/>
     </group>
 
-    <item android:title="@string/navigation_title_name_about">
+    <item android:title="@string/navigation_title_tasks">
         <menu>
             <item
-                android:id="@+id/nav_about_app"
-                android:icon="@drawable/ic_menu_about_app"
-                android:title="@string/navigaton_about_app"/>
+                android:id="@+id/nav_current_tasks"
+                android:icon="@drawable/ic_current_tasks"
+                android:title="@string/navigation_current_tasks"/>
+
             <item
-                android:id="@+id/nav_about_me"
-                android:icon="@drawable/ic_menu_about_me"
-                android:title="@string/navigation_about_me"/>
+                android:id="@+id/nav_in_a_forum"
+                android:icon="@drawable/ic_in_a_forum"
+                android:title="@string/navigation_tasks_in_a_forum"/>
+
+            <item
+                android:id="@+id/nav_done"
+                android:icon="@drawable/ic_completed_tasks"
+                android:title="@string/navigation_done"/>
+
+            <item
+                android:id="@+id/nav_failed"
+                android:icon="@drawable/ic_failed_tasks"
+                android:title="@string/navigation_failed"/>
         </menu>
     </item>
 

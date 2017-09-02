@@ -1,18 +1,18 @@
 <resources>
-    <string name="app_name">0rganize</string>
-
+    <string name="app_name">Overcome</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
     <string name="action_settings">Settings</string>
-
     <string name="navigation_current_tasks">Current tasks</string>
     <string name="navigation_stats">Statistics</string>
-
-    <string name="navigation_title_name_about">Info</string>
+    <string name="navigation_title_tasks">My tasks</string>
+    <string name="navigation_tasks_in_a_forum">In a forum</string>
+    <string name="navigation_done">Completed tasks</string>
+    <string name="navigation_failed">Failed tasks</string>
     <string name="navigaton_about_app">About app</string>
-    <string name="navigation_about_me">About author</string>
     <string name="title_activity_login">Sign in</string>
+    <string name="navigation_task_lounge">Task Forum</string>
+    <string name="button_start_mission">Start mission!</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
