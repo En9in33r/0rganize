@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -110,6 +111,13 @@ public class MainActivity extends AppCompatActivity
             case R.id.action_about_app:
                 AboutMeFragment about = new AboutMeFragment();
                 about.show(manager, "drawer");
+
+                return true;
+            case R.id.action_logout:
+                CheckActivity.activity = "fromMainActivitytoAuthActivity";
+
+                Intent intent = new Intent(this, CheckActivity.class);
+                startActivity(intent);
 
                 return true;
         }
