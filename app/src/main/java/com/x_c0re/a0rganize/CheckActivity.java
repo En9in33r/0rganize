@@ -28,7 +28,7 @@ public class CheckActivity extends AppCompatActivity
                 Intent intent = new Intent(this, AuthActivity.class);
                 startActivity(intent);
             }
-            else
+            else if (login.equals("admin"))
             {
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
@@ -48,8 +48,6 @@ public class CheckActivity extends AppCompatActivity
             Intent intent = new Intent(this, AuthActivity.class);
             startActivity(intent);
         }
-
-
     }
 
     // saves login to special variable
@@ -68,7 +66,6 @@ public class CheckActivity extends AppCompatActivity
         return shLogin.getString(SAVED_TEXT, "");
     }
 
-
     // deletes login from variable
     public void eraseLogin()
     {
@@ -76,5 +73,11 @@ public class CheckActivity extends AppCompatActivity
         edLogin = shLogin.edit();
         edLogin.clear();
         edLogin.apply();
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+
     }
 }
