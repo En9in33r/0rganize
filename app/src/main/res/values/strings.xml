@@ -14,11 +14,13 @@
     <string name="navigation_task_lounge">Task Forum</string>
     <string name="button_start_mission">Start mission!</string>
     <string name="navigation_logout">Log out</string>
+    <string name="new_task_form_label">New task</string>
 
     <string name="launch_login">Login</string>
     <string name="launch_password">Password</string>
     <string name="launch_sign_in_text_button">Not registered yet? Sign in</string>
     <string name="launch_login_button">Log in</string>
+    <string name="new_task_fragment_enter_text">Enter the text...</string>
 
 
 </resources>

@@ -53,7 +53,6 @@ public class AuthActivity extends AppCompatActivity
 
                     Toast toast = Toast.makeText(AuthActivity.this, "Logged as admin", Toast.LENGTH_LONG);
                     toast.show();
-
                 }
                 else
                 {
@@ -73,7 +72,7 @@ public class AuthActivity extends AppCompatActivity
     @Override
     public void onBackPressed()
     {
-
+        // blocked
     }
 }
 

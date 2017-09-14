@@ -46,11 +46,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
-                FragmentTransaction transaction = manager.beginTransaction();
-                fragment = new NewTaskFragment();
-                transaction.replace(R.id.fragment, fragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
+                Intent intent = new Intent(MainActivity.this, NewTaskActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -72,11 +69,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
-                FragmentTransaction transaction = manager.beginTransaction();
-                fragment = new ProfileFragment();
-                transaction.replace(R.id.fragment, fragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
+                Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+                startActivity(intent);
             }
         });
     }

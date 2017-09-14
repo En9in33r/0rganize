@@ -14,6 +14,7 @@
         android:layout_marginTop="8dp"
         android:ems="10"
         android:gravity="top|start"
+        android:hint="@string/new_task_fragment_enter_text"
         android:inputType="textMultiLine"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
