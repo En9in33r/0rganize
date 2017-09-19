@@ -15,6 +15,7 @@
     <string name="button_start_mission">Start mission!</string>
     <string name="navigation_logout">Log out</string>
     <string name="new_task_form_label">New task</string>
+    <string name="current_task_is_empty">There is no running tasks. \nMaybe you should start one?</string>
 
     <string name="launch_login">Login</string>
     <string name="launch_password">Password</string>

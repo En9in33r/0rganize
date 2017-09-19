@@ -73,6 +73,13 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
+
+        fragment = new CurrentTasksFragment();
+
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.replace(R.id.constraintLayoutMain, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     @Override
@@ -127,7 +134,7 @@ public class MainActivity extends AppCompatActivity
         {
             case (R.id.nav_wall_lounge):
                 fragment = new CourtLounge();
-                transaction.replace(R.id.fragment, fragment);
+                transaction.replace(R.id.constraintLayoutMain, fragment);
                 transaction.addToBackStack(null);
                 transaction.commit();
 
@@ -135,7 +142,7 @@ public class MainActivity extends AppCompatActivity
                 return true;
             case (R.id.nav_stats):
                 fragment = new StatsFragment();
-                transaction.replace(R.id.fragment, fragment);
+                transaction.replace(R.id.constraintLayoutMain, fragment);
                 transaction.addToBackStack(null);
                 transaction.commit();
 
@@ -143,7 +150,7 @@ public class MainActivity extends AppCompatActivity
                 return true;
             case (R.id.nav_settings):
                 fragment = new SettingsFragment();
-                transaction.replace(R.id.fragment, fragment);
+                transaction.replace(R.id.constraintLayoutMain, fragment);
                 transaction.addToBackStack(null);
                 transaction.commit();
 
@@ -151,7 +158,7 @@ public class MainActivity extends AppCompatActivity
                 return true;
             case (R.id.nav_current_tasks):
                 fragment = new CurrentTasksFragment();
-                transaction.replace(R.id.fragment, fragment);
+                transaction.replace(R.id.constraintLayoutMain, fragment);
                 transaction.addToBackStack(null);
                 transaction.commit();
 
@@ -159,7 +166,7 @@ public class MainActivity extends AppCompatActivity
                 return true;
             case (R.id.nav_in_a_forum):
                 fragment = new InAForumTasksFragment();
-                transaction.replace(R.id.fragment, fragment);
+                transaction.replace(R.id.constraintLayoutMain, fragment);
                 transaction.addToBackStack(null);
                 transaction.commit();
 
@@ -167,7 +174,7 @@ public class MainActivity extends AppCompatActivity
                 return true;
             case (R.id.nav_done):
                 fragment = new CompletedTasksFragment();
-                transaction.replace(R.id.fragment, fragment);
+                transaction.replace(R.id.constraintLayoutMain, fragment);
                 transaction.addToBackStack(null);
                 transaction.commit();
 
@@ -175,7 +182,7 @@ public class MainActivity extends AppCompatActivity
                 return true;
             case (R.id.nav_failed):
                 fragment = new FailedTasksFragment();
-                transaction.replace(R.id.fragment, fragment);
+                transaction.replace(R.id.constraintLayoutMain, fragment);
                 transaction.addToBackStack(null);
                 transaction.commit();
 

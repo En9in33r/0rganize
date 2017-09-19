@@ -19,11 +19,14 @@ public class CurrentTasksFragment extends ListFragment
     public void onActivityCreated(@Nullable Bundle savedInstanceState)
     {
         super.onActivityCreated(savedInstanceState);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
-                android.R.layout.simple_list_item_1, data);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.new_task_element, R.id.text_element, data);
 
         setListAdapter(adapter);
     }
 
-
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    {
+        return inflater.inflate(R.layout.current_tasks_fragment, container, false);
+    }
 }
