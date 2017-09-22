@@ -110,6 +110,7 @@ public class MainActivity extends AppCompatActivity
                 about.show(manager, "drawer");
 
                 return true;
+
             case R.id.action_logout:
                 CheckActivity.activity = "fromMainActivitytoAuthActivity";
 

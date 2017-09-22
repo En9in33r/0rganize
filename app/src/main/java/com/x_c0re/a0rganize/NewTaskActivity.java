@@ -56,10 +56,4 @@ public class NewTaskActivity extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
-
-    @Override
-    public void onBackPressed()
-    {
-
-    }
 }

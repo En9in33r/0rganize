@@ -6,8 +6,10 @@
     <ListView
         android:id="@id/android:list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
+        android:layout_height="0dp"
+        android:divider="#d3d3d3"
+        android:dividerHeight="5dp"
+        android:layout_weight="1">
     </ListView>
 
     <TextView
@@ -16,7 +18,6 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:text="@string/current_task_is_empty">
-
     </TextView>
 
 </LinearLayout>
