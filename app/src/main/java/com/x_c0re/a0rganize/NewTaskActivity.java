@@ -11,9 +11,13 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.HashMap;
+
 public class NewTaskActivity extends AppCompatActivity
 {
     private EditText mEnterTask;
+
+    HashMap<String, String> map;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -41,7 +45,13 @@ public class NewTaskActivity extends AppCompatActivity
         int id = item.getItemId();
         if (id == R.id.start_mission_button)
         {
-            CurrentTasksFragment.data.add(mEnterTask.getText().toString());
+            // there will be BLOOD x_0 <:8~~ <:8~~
+
+            map = new HashMap<>();
+            CurrentTasksFragment.data.add(map);
+            map.put("ID", "Task #" + (CurrentTasksFragment.data.indexOf(map) + 1));
+            map.put("TaskText", mEnterTask.getText().toString());
+
             Toast toast = Toast.makeText(this, "Succesfully!", Toast.LENGTH_LONG);
             toast.show();
 
