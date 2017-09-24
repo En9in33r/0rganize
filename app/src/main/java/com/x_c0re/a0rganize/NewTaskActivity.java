@@ -45,8 +45,6 @@ public class NewTaskActivity extends AppCompatActivity
         int id = item.getItemId();
         if (id == R.id.start_mission_button)
         {
-            // there will be BLOOD x_0 <:8~~ <:8~~
-
             map = new HashMap<>();
             CurrentTasksFragment.data.add(map);
             map.put("ID", "Task #" + (CurrentTasksFragment.data.indexOf(map) + 1));
