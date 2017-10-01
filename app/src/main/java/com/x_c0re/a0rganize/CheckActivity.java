@@ -7,6 +7,8 @@ import android.os.Bundle;
 
 public class CheckActivity extends AppCompatActivity
 {
+    // КОСТЫЫЫЫЫЫЛЬ!
+
     public final static String SAVED_TEXT = "saved_text";
     public static SharedPreferences shLogin;
     public static SharedPreferences.Editor edLogin;
@@ -20,20 +22,27 @@ public class CheckActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_check);
 
+
+        // standart equal of variable 'activity'
         if (activity.equals(""))
         {
+            // loads login from key
             String login = loadLogin();
+
+            // if nothing keeps in it you are moving to AuthActivity
             if (login.equals(""))
             {
                 Intent intent = new Intent(this, AuthActivity.class);
                 startActivity(intent);
             }
+            // if something keeps in it you checking the registration automatically
             else if (login.equals("admin"))
             {
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
             }
         }
+        // if you are logging in your login saves to a SharedPreferences key and 'activity' variable is erasing
         else if (activity.equals("fromAuthActivitytoMainActivity"))
         {
             saveLogin(loginS);

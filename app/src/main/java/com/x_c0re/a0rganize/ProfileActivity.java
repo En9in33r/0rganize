@@ -6,7 +6,6 @@ import android.view.MenuItem;
 
 public class ProfileActivity extends AppCompatActivity
 {
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -15,7 +14,7 @@ public class ProfileActivity extends AppCompatActivity
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setTitle("My Profile");
+        getSupportActionBar().setTitle(R.string.my_profile);
     }
 
     @Override

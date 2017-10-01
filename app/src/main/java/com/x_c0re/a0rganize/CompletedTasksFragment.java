@@ -23,7 +23,6 @@ public class CompletedTasksFragment extends ListFragment
         super.onActivityCreated(savedInstanceState);
         /* SimpleAdapter adapter = new SimpleAdapter(getActivity(), dataCompleted, R.id.listViewCompleted,
                 new String[] { "ID", "TaskText" }, new int[] { 1, 2 } ); */
-
     }
 
     @Override
