@@ -1,6 +1,7 @@
 package com.x_c0re.a0rganize;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -56,9 +57,11 @@ public class SigninActivity extends AppCompatActivity
                         && !mLoginField.getText().toString().equals("") && !mPasswordField.getText().toString().equals("")
                         && !mRepeatPasswordField.getText().toString().equals(""))
                 {
-                    if (mPasswordField.getText().toString().equals( mRepeatPasswordField.getText().toString() ) )
+                    if (mPasswordField.getText().toString().equals(mRepeatPasswordField.getText().toString()))
                     {
                         SQLiteDatabase database = helper.getWritableDatabase();
+
+                        Cursor cursor = database.query(DBHelper.TABLE_CONTACTS, null, null, null, null, null, null);
 
                         ContentValues contentValues = new ContentValues();
                         contentValues.put(DBHelper.KEY_NAME, mNameField.getText().toString());

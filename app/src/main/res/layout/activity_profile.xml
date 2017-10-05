@@ -2,12 +2,14 @@
 <com.github.florent37.diagonallayout.DiagonalLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:diagonal="http://schemas.android.com/tools"
 
     android:layout_width="match_parent"
     android:layout_height="250dp"
-    android:background="@android:drawable/dialog_holo_dark_frame"
+
+    android:elevation="10dp"
     app:diagonal_angle="20"
-    app:diagonal_direction="right"
-    app:diagonal_position="bottom">
+    diagonal:diagonal_direction="left"
+    diagonal:diagonal_position="bottom">
 
 </com.github.florent37.diagonallayout.DiagonalLayout>

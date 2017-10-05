@@ -31,6 +31,8 @@ public class MainActivity extends AppCompatActivity
 
     private ImageButton mProfileButton;
 
+    public static int current_id = -1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
