@@ -1,7 +1,10 @@
 package com.x_c0re.a0rganize;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -16,11 +19,16 @@ public class AuthActivity extends AppCompatActivity
     private EditText mLoginField, mPasswordField;
     private Button mLogInButton;
 
+    DBHelper helper;
+    SQLiteDatabase db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth);
+
+        helper = new DBHelper(this);
 
         mTextSignIn = (TextView)findViewById(R.id.textViewSignIn);
         mTextSignIn.setOnClickListener(new View.OnClickListener()
@@ -42,22 +50,52 @@ public class AuthActivity extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
-                if (mLoginField.getText().toString().equals("admin") && mPasswordField.getText().toString().equals("qwerty"))
+                String login = mLoginField.getText().toString();
+                String password = mPasswordField.getText().toString();
+
+                db = helper.getWritableDatabase();
+
+                Cursor cursor;
+
+                String selection = "login = ?";
+                String[] selectionArgs = new String[] { login };
+                cursor = db.query(DBHelper.TABLE_CONTACTS, new String[] { DBHelper.KEY_ID, DBHelper.KEY_PASSWORD},
+                        selection, selectionArgs, null, null, null);
+
+                if (cursor != null)
                 {
-                    CheckActivity.activity = "fromAuthActivitytoMainActivity";
-                    CheckActivity.loginS = mLoginField.getText().toString();
+                    cursor.moveToFirst();
+                    String password_from_cursor = cursor.getString(cursor.getColumnIndex(DBHelper.KEY_PASSWORD));
+                    String id_from_cursor = cursor.getString(cursor.getColumnIndex(DBHelper.KEY_ID));
 
-                    Intent intent = new Intent(AuthActivity.this, CheckActivity.class);
-                    startActivity(intent);
+                    if (password_from_cursor.equals(password)) // это заглушка
+                    {
+                        CheckActivity.activity = "fromAuthActivitytoMainActivity";
+                        CheckActivity.loginS = mLoginField.getText().toString();
+
+                        helper.close();
+
+                        Intent intent = new Intent(AuthActivity.this, CheckActivity.class);
+                        startActivity(intent);
 
 
-                    Toast toast = Toast.makeText(AuthActivity.this, "Logged as admin", Toast.LENGTH_LONG);
-                    toast.show();
+                        Toast toast = Toast.makeText(AuthActivity.this, "Logged as " + login, Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+                    else
+                    {
+                        Toast toast = Toast.makeText(AuthActivity.this, "Incorrect login or password", Toast.LENGTH_LONG);
+                        toast.show();
+
+                        helper.close();
+                    }
                 }
                 else
                 {
                     Toast toast = Toast.makeText(AuthActivity.this, "Incorrect login or password", Toast.LENGTH_LONG);
                     toast.show();
+
+                    helper.close();
                 }
             }
         });

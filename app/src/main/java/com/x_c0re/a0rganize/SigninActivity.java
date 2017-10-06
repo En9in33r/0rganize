@@ -70,6 +70,8 @@ public class SigninActivity extends AppCompatActivity
                         contentValues.put(DBHelper.KEY_PASSWORD, mPasswordField.getText().toString());
 
                         database.insert(DBHelper.TABLE_CONTACTS, null, contentValues);
+
+                        cursor.close();
                     }
                     else
                     {
