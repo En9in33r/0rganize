@@ -62,9 +62,8 @@ public class AuthActivity extends AppCompatActivity
                 cursor = db.query(DBHelper.TABLE_CONTACTS, new String[] { DBHelper.KEY_ID, DBHelper.KEY_PASSWORD},
                         selection, selectionArgs, null, null, null);
 
-                if (cursor != null)
+                if (cursor.moveToFirst())
                 {
-                    cursor.moveToFirst();
                     String password_from_cursor = cursor.getString(cursor.getColumnIndex(DBHelper.KEY_PASSWORD));
                     String id_from_cursor = cursor.getString(cursor.getColumnIndex(DBHelper.KEY_ID));
 
@@ -74,10 +73,10 @@ public class AuthActivity extends AppCompatActivity
                         CheckActivity.loginS = mLoginField.getText().toString();
 
                         helper.close();
+                        cursor.close();
 
                         Intent intent = new Intent(AuthActivity.this, CheckActivity.class);
                         startActivity(intent);
-
 
                         Toast toast = Toast.makeText(AuthActivity.this, "Logged as " + login, Toast.LENGTH_LONG);
                         toast.show();
@@ -88,6 +87,7 @@ public class AuthActivity extends AppCompatActivity
                         toast.show();
 
                         helper.close();
+                        cursor.close();
                     }
                 }
                 else
@@ -96,6 +96,7 @@ public class AuthActivity extends AppCompatActivity
                     toast.show();
 
                     helper.close();
+                    cursor.close();
                 }
             }
         });
