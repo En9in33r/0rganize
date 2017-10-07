@@ -2,6 +2,7 @@ package com.x_c0re.a0rganize;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -22,6 +23,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
@@ -29,15 +31,22 @@ public class MainActivity extends AppCompatActivity
     private Fragment fragment;
     private FragmentManager manager;
 
+    private TextView name_and_surname;
+
     private ImageButton mProfileButton;
 
-    public static int current_id = -1;
+    SharedPreferences sharedPreferencesNameSurname;
+    SharedPreferences.Editor editorNameSurname;
+
+    public static String name_surname_bridge;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        saveNameSurname(name_surname_bridge);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -62,9 +71,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        manager = getSupportFragmentManager();
-
-        mProfileButton = navigationView.getHeaderView(0).findViewById(R.id.imageButton3);
+        mProfileButton = navigationView.getHeaderView(0).findViewById(R.id.avatarImage);
         mProfileButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -75,7 +82,13 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        name_and_surname = navigationView.getHeaderView(0).findViewById(R.id.nameYsurname); // <======== IS HERE
+
+        String a = loadNameSurname();
+        name_and_surname.setText(a);
+
         fragment = new CurrentTasksFragment();
+        manager = getSupportFragmentManager();
 
         FragmentTransaction transaction = manager.beginTransaction();
         transaction.replace(R.id.constraintLayoutMain, fragment);
@@ -114,6 +127,9 @@ public class MainActivity extends AppCompatActivity
 
             case R.id.action_logout:
                 CheckActivity.activity = "fromMainActivitytoAuthActivity";
+
+                eraseNameSurname();
+                name_and_surname.setText("");
 
                 Intent intent = new Intent(this, CheckActivity.class);
                 startActivity(intent);
@@ -193,5 +209,27 @@ public class MainActivity extends AppCompatActivity
         }
 
         return true;
+    }
+
+    public void saveNameSurname(String name_surname)
+    {
+        sharedPreferencesNameSurname = getPreferences(MODE_PRIVATE);
+        editorNameSurname = sharedPreferencesNameSurname.edit();
+        editorNameSurname.putString("saved_text", name_surname);
+        editorNameSurname.apply();
+    }
+
+    public String loadNameSurname()
+    {
+        sharedPreferencesNameSurname = getPreferences(MODE_PRIVATE);
+        return sharedPreferencesNameSurname.getString("saved_text", "");
+    }
+
+    public void eraseNameSurname()
+    {
+        sharedPreferencesNameSurname = getPreferences(MODE_PRIVATE);
+        editorNameSurname = sharedPreferencesNameSurname.edit();
+        editorNameSurname.clear();
+        editorNameSurname.apply();
     }
 }

@@ -1,6 +1,7 @@
 package com.x_c0re.a0rganize;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -12,6 +13,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import static java.security.AccessController.getContext;
 
 public class AuthActivity extends AppCompatActivity
 {
@@ -59,18 +62,23 @@ public class AuthActivity extends AppCompatActivity
 
                 String selection = "login = ?";
                 String[] selectionArgs = new String[] { login };
-                cursor = db.query(DBHelper.TABLE_CONTACTS, new String[] { DBHelper.KEY_ID, DBHelper.KEY_PASSWORD},
+                cursor = db.query(DBHelper.TABLE_CONTACTS,
+                        new String[] { DBHelper.KEY_ID, DBHelper.KEY_PASSWORD, DBHelper.KEY_NAME, DBHelper.KEY_SURNAME},
                         selection, selectionArgs, null, null, null);
 
                 if (cursor.moveToFirst())
                 {
                     String password_from_cursor = cursor.getString(cursor.getColumnIndex(DBHelper.KEY_PASSWORD));
                     String id_from_cursor = cursor.getString(cursor.getColumnIndex(DBHelper.KEY_ID));
+                    String name_from_cursor = cursor.getString(cursor.getColumnIndex(DBHelper.KEY_NAME));
+                    String surname_from_cursor = cursor.getString(cursor.getColumnIndex(DBHelper.KEY_SURNAME));
 
-                    if (password_from_cursor.equals(password)) // это заглушка
+                    if (password_from_cursor.equals(password))
                     {
                         CheckActivity.activity = "fromAuthActivitytoMainActivity";
                         CheckActivity.loginS = mLoginField.getText().toString();
+
+                        MainActivity.name_surname_bridge = (name_from_cursor + " " + surname_from_cursor);
 
                         helper.close();
                         cursor.close();

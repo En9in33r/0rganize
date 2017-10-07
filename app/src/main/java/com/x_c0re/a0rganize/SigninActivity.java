@@ -36,7 +36,7 @@ public class SigninActivity extends AppCompatActivity
         mPasswordField = (EditText)findViewById(R.id.editTextPassword);
         mRepeatPasswordField = (EditText)findViewById(R.id.editTextRepeatPassword);
 
-        helper = new DBHelper(this);
+
     }
 
     @Override
@@ -59,19 +59,40 @@ public class SigninActivity extends AppCompatActivity
                 {
                     if (mPasswordField.getText().toString().equals(mRepeatPasswordField.getText().toString()))
                     {
+                        helper = new DBHelper(this);
                         SQLiteDatabase database = helper.getWritableDatabase();
 
-                        Cursor cursor = database.query(DBHelper.TABLE_CONTACTS, null, null, null, null, null, null);
+                        String selection = "login = ?";
+                        String[] selectionArgs = new String[] { mLoginField.getText().toString() };
 
-                        ContentValues contentValues = new ContentValues();
-                        contentValues.put(DBHelper.KEY_NAME, mNameField.getText().toString());
-                        contentValues.put(DBHelper.KEY_SURNAME, mSurnameField.getText().toString());
-                        contentValues.put(DBHelper.KEY_LOGIN, mLoginField.getText().toString());
-                        contentValues.put(DBHelper.KEY_PASSWORD, mPasswordField.getText().toString());
+                        Cursor cursor = database.query(DBHelper.TABLE_CONTACTS, new String[] { DBHelper.KEY_ID },
+                                selection, selectionArgs, null, null, null);
+                        if (cursor.moveToFirst())
+                        {
+                            Toast toast = Toast.makeText(this, "Login '" + mLoginField.getText().toString() +
+                            "' already taken", Toast.LENGTH_LONG);
+                            toast.show();
 
-                        database.insert(DBHelper.TABLE_CONTACTS, null, contentValues);
+                            cursor.close();
+                            database.close();
+                        }
+                        else
+                        {
+                            cursor.close();
 
-                        cursor.close();
+                            Cursor cursor2 = database.query(DBHelper.TABLE_CONTACTS, null, null, null, null, null, null);
+
+                            ContentValues contentValues = new ContentValues();
+                            contentValues.put(DBHelper.KEY_NAME, mNameField.getText().toString());
+                            contentValues.put(DBHelper.KEY_SURNAME, mSurnameField.getText().toString());
+                            contentValues.put(DBHelper.KEY_LOGIN, mLoginField.getText().toString());
+                            contentValues.put(DBHelper.KEY_PASSWORD, mPasswordField.getText().toString());
+
+                            database.insert(DBHelper.TABLE_CONTACTS, null, contentValues);
+
+                            cursor2.close();
+                            database.close();
+                        }
                     }
                     else
                     {

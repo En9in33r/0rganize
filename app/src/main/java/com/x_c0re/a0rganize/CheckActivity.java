@@ -7,7 +7,7 @@ import android.os.Bundle;
 
 public class CheckActivity extends AppCompatActivity
 {
-    // КОСТЫЫЫЫЫЫЛЬ!
+    // любимый костылик
 
     public final static String SAVED_TEXT = "saved_text";
     public static SharedPreferences shLogin;
@@ -22,7 +22,6 @@ public class CheckActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_check);
 
-
         // standart equal of variable 'activity'
         if (activity.equals(""))
         {
@@ -36,7 +35,7 @@ public class CheckActivity extends AppCompatActivity
                 startActivity(intent);
             }
             // if something keeps in it you checking the registration automatically
-            else if (login.equals("admin"))
+            else
             {
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
