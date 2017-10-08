@@ -78,6 +78,7 @@ public class AuthActivity extends AppCompatActivity
                         CheckActivity.activity = "fromAuthActivitytoMainActivity";
                         CheckActivity.loginS = mLoginField.getText().toString();
 
+                        MainActivity.check_for_name_surname = "moved";
                         MainActivity.name_surname_bridge = (name_from_cursor + " " + surname_from_cursor);
 
                         helper.close();

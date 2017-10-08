@@ -40,12 +40,17 @@ public class MainActivity extends AppCompatActivity
 
     public static String name_surname_bridge;
 
+    public static String check_for_name_surname = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        saveNameSurname(name_surname_bridge);
+        if (check_for_name_surname.equals("moved"))
+        {
+            saveNameSurname(name_surname_bridge);
+        }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
