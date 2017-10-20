@@ -1,8 +1,10 @@
 package com.x_c0re.a0rganize;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -19,6 +21,8 @@ public class SigninActivity extends AppCompatActivity
     private EditText mRepeatPasswordField;
 
     DBHelper helper;
+
+    FragmentManager manager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -70,7 +74,7 @@ public class SigninActivity extends AppCompatActivity
                         if (cursor.moveToFirst())
                         {
                             Toast toast = Toast.makeText(this, "Login '" + mLoginField.getText().toString() +
-                            "' already taken", Toast.LENGTH_LONG);
+                                    "' already taken", Toast.LENGTH_LONG);
                             toast.show();
 
                             cursor.close();
@@ -80,18 +84,13 @@ public class SigninActivity extends AppCompatActivity
                         {
                             cursor.close();
 
-                            Cursor cursor2 = database.query(DBHelper.TABLE_CONTACTS, null, null, null, null, null, null);
+                            VerificationCodeActivity.entered_login = mLoginField.getText().toString();
+                            VerificationCodeActivity.entered_password = mPasswordField.getText().toString();
+                            VerificationCodeActivity.entered_name = mNameField.getText().toString();
+                            VerificationCodeActivity.entered_surname = mSurnameField.getText().toString();
 
-                            ContentValues contentValues = new ContentValues();
-                            contentValues.put(DBHelper.KEY_NAME, mNameField.getText().toString());
-                            contentValues.put(DBHelper.KEY_SURNAME, mSurnameField.getText().toString());
-                            contentValues.put(DBHelper.KEY_LOGIN, mLoginField.getText().toString());
-                            contentValues.put(DBHelper.KEY_PASSWORD, mPasswordField.getText().toString());
-
-                            database.insert(DBHelper.TABLE_CONTACTS, null, contentValues);
-
-                            cursor2.close();
-                            database.close();
+                            Intent intent = new Intent(this, CheckPhoneNumberActivity.class);
+                            startActivity(intent);
                         }
                     }
                     else
