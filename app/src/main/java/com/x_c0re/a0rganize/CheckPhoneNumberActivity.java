@@ -79,9 +79,6 @@ public class CheckPhoneNumberActivity extends AppCompatActivity
 
                 VerificationCodeActivity.codeVerifying = String.valueOf(code);
 
-                ps = new PostRequestSender();
-                ps.execute();
-
                 // ЕСЛИ НОМЕР УЖЕ ИСПОЛЬЗУЕТСЯ
                 helper = new DBHelper(this);
                 SQLiteDatabase database = helper.getWritableDatabase();
@@ -92,8 +89,7 @@ public class CheckPhoneNumberActivity extends AppCompatActivity
                         selection, selectionArgs, null, null, null);
                 if (cursor.moveToFirst())
                 {
-                    Toast toast = Toast.makeText(this, "Phone number '" + mInputNumber.getText().toString() +
-                            "' already taken", Toast.LENGTH_LONG);
+                    Toast toast = Toast.makeText(this, "This phone number is already taken", Toast.LENGTH_LONG);
                     toast.show();
 
                     cursor.close();
@@ -102,6 +98,9 @@ public class CheckPhoneNumberActivity extends AppCompatActivity
                 else
                 {
                     VerificationCodeActivity.entered_phone = mInputNumber.getText().toString();
+
+                    ps = new PostRequestSender();
+                    ps.execute();
 
                     Intent intent = new Intent(this, VerificationCodeActivity.class);
                     startActivity(intent);

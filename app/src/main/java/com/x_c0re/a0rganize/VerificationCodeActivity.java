@@ -1,6 +1,7 @@
 package com.x_c0re.a0rganize;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.FragmentManager;
@@ -73,6 +74,9 @@ public class VerificationCodeActivity extends AppCompatActivity
 
                     Toast toast = Toast.makeText(getApplicationContext(), "Phone number confirmed", Toast.LENGTH_LONG);
                     toast.show();
+
+                    Intent intent = new Intent(this, UploadPhotoActivity.class);
+                    startActivity(intent);
                 }
                 else
                 {

@@ -48,6 +48,8 @@
         </activity>
         <activity android:name=".VerificationCodeActivity">
         </activity>
+        <activity android:name=".UploadPhotoActivity">
+        </activity>
     </application>
 
 </manifest>
