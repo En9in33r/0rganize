@@ -1,6 +1,8 @@
 package com.x_c0re.a0rganize;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
@@ -17,7 +19,9 @@ public class NewTaskActivity extends AppCompatActivity
 {
     private EditText mEnterTask;
 
-    HashMap<String, String> map;
+    DBHelper helper;
+
+    public static String current_login;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -45,12 +49,17 @@ public class NewTaskActivity extends AppCompatActivity
         int id = item.getItemId();
         if (id == R.id.start_mission_button)
         {
-            map = new HashMap<>();
-            CurrentTasksFragment.data.add(map);
-            map.put("ID", "Task #" + (CurrentTasksFragment.data.indexOf(map) + 1));
-            map.put("TaskText", mEnterTask.getText().toString());
+            helper = new DBHelper(this);
+            SQLiteDatabase db = helper.getWritableDatabase();
 
-            Toast toast = Toast.makeText(this, "Succesfully!", Toast.LENGTH_LONG);
+            ContentValues values = new ContentValues();
+            values.put(DBHelper.KEY_AUTHOR_LOGIN, current_login);
+            values.put(DBHelper.KEY_TEXT, mEnterTask.getText().toString());
+
+            db.insert(DBHelper.TABLE_RUNNING_TASKS, null, values);
+            db.close();
+
+            Toast toast = Toast.makeText(this, "Successfully!", Toast.LENGTH_LONG);
             toast.show();
 
             Intent intent = new Intent(this, MainActivity.class);

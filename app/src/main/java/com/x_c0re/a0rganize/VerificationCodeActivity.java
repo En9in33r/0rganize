@@ -25,7 +25,6 @@ public class VerificationCodeActivity extends AppCompatActivity
     public static String entered_phone;
 
     DBHelper helper;
-    FragmentManager manager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -58,7 +57,9 @@ public class VerificationCodeActivity extends AppCompatActivity
                     helper = new DBHelper(this);
                     SQLiteDatabase database = helper.getWritableDatabase();
 
-                    Cursor cursor2 = database.query(DBHelper.TABLE_CONTACTS, null, null, null, null, null, null);
+                    // тут не нужен курсор, это надо убрать
+                    Cursor cursor2 = database.query(DBHelper.TABLE_CONTACTS,
+                            null, null, null, null, null, null);
 
                     ContentValues contentValues = new ContentValues();
                     contentValues.put(DBHelper.KEY_NAME, entered_name);

@@ -18,7 +18,8 @@
         android:layout_marginLeft="0dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        />
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/photoUploadText"/>
 
     <TextView
         android:id="@+id/photoUploadText"
@@ -27,7 +28,20 @@
         android:text="Upload your photo"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:textSize="18sp"
-        tools:layout_editor_absoluteX="41dp"
-        tools:layout_editor_absoluteY="348dp"/>
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/button"/>
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        android:onClick="onClick"
+        android:text="Skip"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"/>
 
 </android.support.constraint.ConstraintLayout>

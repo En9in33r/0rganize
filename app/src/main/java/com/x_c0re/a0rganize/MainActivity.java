@@ -1,18 +1,13 @@
 package com.x_c0re.a0rganize;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -31,25 +26,29 @@ public class MainActivity extends AppCompatActivity
     private Fragment fragment;
     private FragmentManager manager;
 
-    private TextView name_and_surname;
+    private TextView login_view;
 
     private ImageButton mProfileButton;
 
-    SharedPreferences sharedPreferencesNameSurname;
-    SharedPreferences.Editor editorNameSurname;
+    SharedPreferences sharedPreferencesLogin;
+    SharedPreferences.Editor editorLogin;
 
-    public static String name_surname_bridge;
+    // SharedPreferences sharedPreferencesLogin;
+    // SharedPreferences.Editor editorLogin;
 
-    public static String check_for_name_surname = "";
+    public static String login_bridge;
+
+    public static String check_for_login = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (check_for_name_surname.equals("moved"))
+        if (check_for_login.equals("moved"))
         {
-            saveNameSurname(name_surname_bridge);
+            saveLogin(login_bridge);
+            // saveLogin(login_bridge);
         }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -61,6 +60,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
+                NewTaskActivity.current_login = login_view.getText().toString();
+
                 Intent intent = new Intent(MainActivity.this, NewTaskActivity.class);
                 startActivity(intent);
             }
@@ -87,10 +88,10 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        name_and_surname = navigationView.getHeaderView(0).findViewById(R.id.nameYsurname); // <======== IS HERE
+        login_view = navigationView.getHeaderView(0).findViewById(R.id.textViewLogin); // <======== IS HERE
 
-        String a = loadNameSurname();
-        name_and_surname.setText(a);
+        String a = loadLogin();
+        login_view.setText(a);
 
         fragment = new CurrentTasksFragment();
         manager = getSupportFragmentManager();
@@ -133,8 +134,9 @@ public class MainActivity extends AppCompatActivity
             case R.id.action_logout:
                 CheckActivity.activity = "fromMainActivitytoAuthActivity";
 
-                eraseNameSurname();
-                name_and_surname.setText("");
+                eraseLogin();
+                // eraseLogin();
+                login_view.setText(""); // наверное, это лишнее, но пусть будет)
 
                 Intent intent = new Intent(this, CheckActivity.class);
                 startActivity(intent);
@@ -216,25 +218,25 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public void saveNameSurname(String name_surname)
+    public void saveLogin(String login)
     {
-        sharedPreferencesNameSurname = getPreferences(MODE_PRIVATE);
-        editorNameSurname = sharedPreferencesNameSurname.edit();
-        editorNameSurname.putString("saved_text", name_surname);
-        editorNameSurname.apply();
+        sharedPreferencesLogin = getPreferences(MODE_PRIVATE);
+        editorLogin = sharedPreferencesLogin.edit();
+        editorLogin.putString("saved_text", login);
+        editorLogin.apply();
     }
 
-    public String loadNameSurname()
+    public String loadLogin()
     {
-        sharedPreferencesNameSurname = getPreferences(MODE_PRIVATE);
-        return sharedPreferencesNameSurname.getString("saved_text", "");
+        sharedPreferencesLogin = getPreferences(MODE_PRIVATE);
+        return sharedPreferencesLogin.getString("saved_text", "");
     }
 
-    public void eraseNameSurname()
+    public void eraseLogin()
     {
-        sharedPreferencesNameSurname = getPreferences(MODE_PRIVATE);
-        editorNameSurname = sharedPreferencesNameSurname.edit();
-        editorNameSurname.clear();
-        editorNameSurname.apply();
+        sharedPreferencesLogin = getPreferences(MODE_PRIVATE);
+        editorLogin = sharedPreferencesLogin.edit();
+        editorLogin.clear();
+        editorLogin.apply();
     }
 }

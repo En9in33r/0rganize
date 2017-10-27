@@ -82,10 +82,4 @@ public class CheckActivity extends AppCompatActivity
         edLogin.clear();
         edLogin.apply();
     }
-
-    @Override
-    public void onBackPressed()
-    {
-
-    }
 }

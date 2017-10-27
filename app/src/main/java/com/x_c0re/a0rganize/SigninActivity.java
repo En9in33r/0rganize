@@ -22,8 +22,6 @@ public class SigninActivity extends AppCompatActivity
 
     DBHelper helper;
 
-    FragmentManager manager;
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -39,8 +37,6 @@ public class SigninActivity extends AppCompatActivity
         mLoginField = (EditText)findViewById(R.id.editTextLogin);
         mPasswordField = (EditText)findViewById(R.id.editTextPassword);
         mRepeatPasswordField = (EditText)findViewById(R.id.editTextRepeatPassword);
-
-
     }
 
     @Override
@@ -88,6 +84,8 @@ public class SigninActivity extends AppCompatActivity
                             VerificationCodeActivity.entered_password = mPasswordField.getText().toString();
                             VerificationCodeActivity.entered_name = mNameField.getText().toString();
                             VerificationCodeActivity.entered_surname = mSurnameField.getText().toString();
+
+                            UploadPhotoActivity.login_registration = mLoginField.getText().toString();
 
                             Intent intent = new Intent(this, CheckPhoneNumberActivity.class);
                             startActivity(intent);

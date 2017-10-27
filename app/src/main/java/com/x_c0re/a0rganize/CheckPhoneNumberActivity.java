@@ -99,6 +99,8 @@ public class CheckPhoneNumberActivity extends AppCompatActivity
                 {
                     VerificationCodeActivity.entered_phone = mInputNumber.getText().toString();
 
+                    // TODO: в случае отсутствия интернет-соединения должен выводиться Toast с последующей отменой регистрации
+
                     ps = new PostRequestSender();
                     ps.execute();
 

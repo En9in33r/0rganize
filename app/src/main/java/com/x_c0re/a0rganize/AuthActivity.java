@@ -73,13 +73,30 @@ public class AuthActivity extends AppCompatActivity
                     String name_from_cursor = cursor.getString(cursor.getColumnIndex(DBHelper.KEY_NAME));
                     String surname_from_cursor = cursor.getString(cursor.getColumnIndex(DBHelper.KEY_SURNAME));
 
+                    // достать логин из поля ввода было проще, знаю. upd: придется все-таки из поля
+                    String login_from_cursor = mLoginField.getText().toString();
+
+                    /* Ищет по введенному логину соответствующую строку в таблицу БД, если
+                    * находит что-то - достает из строки пароль, имя и фамилию пользователя.
+                    * Если введенный в другом поле пароль равен тому паролю, что был выведен
+                    * из БД, производится вход в аккаунт. Затем переходная активити, о
+                    * которой никто не должен знать, получает информацию о том, что производится
+                    * переход из активити auth в активити main; переменная loginS получает значение
+                    * в виде введенного логина; для того, чтобы после перехода в mainactivity
+                    * корректно отображались имя и фамилия юзера на шторке, статические переменные в ней
+                    * получают значения сигнала и имени и фамилии; */
+
+                    /* TODO: при регистрации нового пользователя необходимо реализовать то же самое! */
+                    /* TODO: а также при входе и регистрации должен записываться в SharedPreferences логин! <- это выполни первым */
+
                     if (password_from_cursor.equals(password))
                     {
                         CheckActivity.activity = "fromAuthActivitytoMainActivity";
                         CheckActivity.loginS = mLoginField.getText().toString();
 
-                        MainActivity.check_for_name_surname = "moved";
-                        MainActivity.name_surname_bridge = (name_from_cursor + " " + surname_from_cursor);
+                        MainActivity.check_for_login = "moved";
+                        MainActivity.login_bridge = (name_from_cursor + " " + surname_from_cursor);
+                        MainActivity.login_bridge = login_from_cursor;
 
                         helper.close();
                         cursor.close();
