@@ -100,6 +100,8 @@ public class MainActivity extends AppCompatActivity
         transaction.replace(R.id.constraintLayoutMain, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
+
+        CurrentTasksFragment.current_login = login_view.getText().toString();
     }
 
     @Override

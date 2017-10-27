@@ -49,6 +49,8 @@ public class NewTaskActivity extends AppCompatActivity
         int id = item.getItemId();
         if (id == R.id.start_mission_button)
         {
+            CurrentTasksFragment.data.clear();
+
             helper = new DBHelper(this);
             SQLiteDatabase db = helper.getWritableDatabase();
 

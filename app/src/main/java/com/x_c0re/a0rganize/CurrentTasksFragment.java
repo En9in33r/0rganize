@@ -21,6 +21,8 @@ public class CurrentTasksFragment extends ListFragment
 
     DBHelper helper;
 
+    public static String current_login;
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState)
     {
@@ -40,7 +42,7 @@ public class CurrentTasksFragment extends ListFragment
 
         String selection = "author_login = ?";
 
-        String[] selectionArgs = new String[] { "admin" };
+        String[] selectionArgs = new String[] { current_login }; // заглушка
 
         cursor = db.query(DBHelper.TABLE_RUNNING_TASKS,
                 new String[] {DBHelper.KEY_ID, DBHelper.KEY_AUTHOR_LOGIN, DBHelper.KEY_TEXT },
@@ -62,5 +64,26 @@ public class CurrentTasksFragment extends ListFragment
         cursor.close();
 
         return inflater.inflate(R.layout.current_tasks_fragment, container, false);
+    }
+
+    @Override
+    public void onDestroyView()
+    {
+        data.clear();
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy()
+    {
+        data.clear();
+        super.onDestroy();
+    }
+
+    @Override
+    public void onDetach()
+    {
+        data.clear();
+        super.onDetach();
     }
 }
