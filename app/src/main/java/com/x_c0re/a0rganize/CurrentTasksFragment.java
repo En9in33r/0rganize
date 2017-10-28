@@ -1,6 +1,5 @@
 package com.x_c0re.a0rganize;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -9,26 +8,23 @@ import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SimpleAdapter;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class CurrentTasksFragment extends ListFragment
 {
-    public static ArrayList<HashMap<String, String>> data = new ArrayList<>();
-
-    DBHelper helper;
+    public static ArrayList<CurrentTask> data = new ArrayList<>();
+    CurrentTasksAdapter adapter;
 
     public static String current_login;
+    DBHelper helper;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState)
     {
         super.onActivityCreated(savedInstanceState);
-        SimpleAdapter adapter = new SimpleAdapter(getActivity(), data, R.layout.new_task_element,
-                new String[] {"AuthorLogin", "TaskText"}, new int[] {R.id.textTaskID, R.id.text_element} );
+        adapter = new CurrentTasksAdapter(getActivity(), data);
 
         setListAdapter(adapter);
     }
@@ -42,7 +38,7 @@ public class CurrentTasksFragment extends ListFragment
 
         String selection = "author_login = ?";
 
-        String[] selectionArgs = new String[] { current_login }; // заглушка
+        String[] selectionArgs = new String[] { current_login };
 
         cursor = db.query(DBHelper.TABLE_RUNNING_TASKS,
                 new String[] {DBHelper.KEY_ID, DBHelper.KEY_AUTHOR_LOGIN, DBHelper.KEY_TEXT },
@@ -52,10 +48,8 @@ public class CurrentTasksFragment extends ListFragment
         {
             while (!cursor.isAfterLast())
             {
-                HashMap<String, String> map = new HashMap<>();
-                map.put("AuthorLogin", cursor.getString(cursor.getColumnIndex(DBHelper.KEY_AUTHOR_LOGIN)));
-                map.put("TaskText", cursor.getString(cursor.getColumnIndex(DBHelper.KEY_TEXT)));
-                data.add(map);
+                data.add(new CurrentTask(cursor.getString(cursor.getColumnIndex(DBHelper.KEY_AUTHOR_LOGIN)),
+                        cursor.getString(cursor.getColumnIndex(DBHelper.KEY_TEXT))));
 
                 cursor.moveToNext();
             }
