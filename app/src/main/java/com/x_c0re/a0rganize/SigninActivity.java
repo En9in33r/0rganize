@@ -1,16 +1,17 @@
 package com.x_c0re.a0rganize;
 
-import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.support.v4.app.FragmentManager;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.github.kevinsawicki.http.HttpRequest;
+
+import java.util.concurrent.ExecutionException;
 
 public class SigninActivity extends AppCompatActivity
 {
@@ -20,7 +21,8 @@ public class SigninActivity extends AppCompatActivity
     private EditText mPasswordField;
     private EditText mRepeatPasswordField;
 
-    DBHelper helper;
+    ConnectionDetector cd;
+    LoginSeeker seeker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -51,7 +53,6 @@ public class SigninActivity extends AppCompatActivity
     {
         switch (item.getItemId())
         {
-            // registration button
             case R.id.start_mission_button:
                 if (!mNameField.getText().toString().equals("") && !mSurnameField.getText().toString().equals("")
                         && !mLoginField.getText().toString().equals("") && !mPasswordField.getText().toString().equals("")
@@ -59,36 +60,39 @@ public class SigninActivity extends AppCompatActivity
                 {
                     if (mPasswordField.getText().toString().equals(mRepeatPasswordField.getText().toString()))
                     {
-                        helper = new DBHelper(this);
-                        SQLiteDatabase database = helper.getWritableDatabase();
+                        // поиск в БД логина. если он уже занят - регистрация отменяется (все это выполняется при условии
+                        // того, что смартфон подключен к Интернету)
 
-                        String selection = "login = ?";
-                        String[] selectionArgs = new String[] { mLoginField.getText().toString() };
-
-                        Cursor cursor = database.query(DBHelper.TABLE_CONTACTS, new String[] { DBHelper.KEY_ID },
-                                selection, selectionArgs, null, null, null);
-                        if (cursor.moveToFirst())
+                        cd = new ConnectionDetector(this);
+                        if (cd.isConnected())
                         {
-                            Toast toast = Toast.makeText(this, "Login '" + mLoginField.getText().toString() +
-                                    "' already taken", Toast.LENGTH_LONG);
-                            toast.show();
+                            seeker = new LoginSeeker();
+                            seeker.execute(mLoginField.getText().toString());
+                            try
+                            {
+                                if (seeker.get()) // если ответ сервера - null (если по запросу ничего не найдено и логин свободен)
+                                {
+                                    VerificationCodeActivity.entered_name = mNameField.getText().toString();
+                                    VerificationCodeActivity.entered_surname = mSurnameField.getText().toString();
+                                    VerificationCodeActivity.entered_login = mLoginField.getText().toString();
+                                    VerificationCodeActivity.entered_password = mPasswordField.getText().toString();
 
-                            cursor.close();
-                            database.close();
+                                    Intent intent = new Intent(this, CheckPhoneNumberActivity.class);
+                                    startActivity(intent);
+                                }
+                                else
+                                {
+                                    Toast.makeText(this, "This login is already taken", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                            catch (InterruptedException | ExecutionException e)
+                            {
+                                e.printStackTrace();
+                            }
                         }
                         else
                         {
-                            cursor.close();
-
-                            VerificationCodeActivity.entered_login = mLoginField.getText().toString();
-                            VerificationCodeActivity.entered_password = mPasswordField.getText().toString();
-                            VerificationCodeActivity.entered_name = mNameField.getText().toString();
-                            VerificationCodeActivity.entered_surname = mSurnameField.getText().toString();
-
-                            UploadPhotoActivity.login_registration = mLoginField.getText().toString();
-
-                            Intent intent = new Intent(this, CheckPhoneNumberActivity.class);
-                            startActivity(intent);
+                            Toast.makeText(this, "Internet connection required", Toast.LENGTH_LONG).show();
                         }
                     }
                     else
@@ -110,5 +114,21 @@ public class SigninActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    static class LoginSeeker extends AsyncTask<String, Void, Boolean>
+    {
+        @Override
+        protected Boolean doInBackground(String... strings)
+        {
+            HttpRequest request = HttpRequest.get("http://95.85.19.194/contacts/find_by_login/" + strings[0]);
+            return request.body().equals("null");
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean)
+        {
+            super.onPostExecute(aBoolean);
+        }
     }
 }

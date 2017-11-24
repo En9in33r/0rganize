@@ -1,21 +1,23 @@
 package com.x_c0re.a0rganize;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class CurrentTasksAdapter extends BaseAdapter
 {
     Context context;
     LayoutInflater inflater;
     ArrayList<CurrentTask> currentTasks;
+    ImageButton mFailTask;
+    ImageButton mCompleteTask;
 
     CurrentTasksAdapter(Context context, ArrayList<CurrentTask> currentTasks)
     {
@@ -43,18 +45,47 @@ public class CurrentTasksAdapter extends BaseAdapter
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent)
+    public View getView(final int position, View convertView, ViewGroup parent)
     {
         View view = convertView;
         if (view == null)
         {
-            view = inflater.inflate(R.layout.new_task_element, parent, false);
+            view = inflater.inflate(R.layout.current_task_element, parent, false);
         }
 
         CurrentTask t = getCurrentTask(position);
 
         ((TextView)view.findViewById(R.id.textAuthorLogin)).setText(t.author_login);
         ((TextView)view.findViewById(R.id.text_element)).setText(t.text);
+
+        mFailTask = (ImageButton)view.findViewById(R.id.canselTaskButton);
+        mCompleteTask = (ImageButton)view.findViewById(R.id.completeTaskButton);
+
+        View.OnClickListener mClickListener = new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                switch (view.getId())
+                {
+                    case R.id.canselTaskButton:
+                        CancelTheTaskDialog.current_post_id = Integer.parseInt(view.getTag().toString());
+                        CancelTheTaskDialog dialog = new CancelTheTaskDialog();
+                        dialog.show(((MainActivity)context).getSupportFragmentManager() , "dialog");
+
+                        break;
+                    case R.id.completeTaskButton:
+
+                        break;
+                }
+            }
+        };
+
+        mFailTask.setOnClickListener(mClickListener);
+        mCompleteTask.setOnClickListener(mClickListener);
+
+        mFailTask.setTag(position);
+        mCompleteTask.setTag(position);
 
         return view;
     }

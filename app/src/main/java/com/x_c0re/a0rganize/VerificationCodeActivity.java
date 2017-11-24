@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,6 +12,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.github.kevinsawicki.http.HttpRequest;
 
 public class VerificationCodeActivity extends AppCompatActivity
 {
@@ -24,8 +27,6 @@ public class VerificationCodeActivity extends AppCompatActivity
     public static String entered_surname;
     public static String entered_phone;
 
-    DBHelper helper;
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -36,7 +37,7 @@ public class VerificationCodeActivity extends AppCompatActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Number Verification");
 
-        mCodeField = (EditText)findViewById(R.id.codeField);
+        mCodeField = findViewById(R.id.codeField);
     }
 
     @Override
@@ -54,36 +55,17 @@ public class VerificationCodeActivity extends AppCompatActivity
             case R.id.start_mission_button:
                 if (codeVerifying.equals(mCodeField.getText().toString()))
                 {
-                    helper = new DBHelper(this);
-                    SQLiteDatabase database = helper.getWritableDatabase();
-
-                    // тут не нужен курсор, это надо убрать
-                    Cursor cursor2 = database.query(DBHelper.TABLE_CONTACTS,
-                            null, null, null, null, null, null);
-
-                    ContentValues contentValues = new ContentValues();
-                    contentValues.put(DBHelper.KEY_NAME, entered_name);
-                    contentValues.put(DBHelper.KEY_SURNAME, entered_surname);
-                    contentValues.put(DBHelper.KEY_LOGIN, entered_login);
-                    contentValues.put(DBHelper.KEY_PASSWORD, entered_password);
-                    contentValues.put(DBHelper.KEY_PHONE, entered_phone);
-
-                    database.insert(DBHelper.TABLE_CONTACTS, null, contentValues);
-
-                    cursor2.close();
-                    database.close();
-
-                    Toast toast = Toast.makeText(getApplicationContext(), "Phone number confirmed", Toast.LENGTH_LONG);
+                    Toast toast = Toast.makeText(getApplicationContext(), "Phone number confirmed!", Toast.LENGTH_LONG);
                     toast.show();
 
-                    Intent intent = new Intent(this, UploadPhotoActivity.class);
+                    Intent intent = new Intent(this, CropOrSkipActivity.class);
                     startActivity(intent);
                 }
                 else
                 {
-                    Toast toast = Toast.makeText(getApplicationContext(), "Incorrect code", Toast.LENGTH_LONG);
-                    toast.show();
+                    Toast.makeText(this, "Internet connection required", Toast.LENGTH_LONG).show();
                 }
+
                 return true;
             case android.R.id.home:
                 this.finish();

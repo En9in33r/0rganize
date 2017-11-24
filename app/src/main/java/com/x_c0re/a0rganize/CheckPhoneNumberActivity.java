@@ -32,6 +32,7 @@ import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -42,8 +43,9 @@ public class CheckPhoneNumberActivity extends AppCompatActivity
     final Random random = new Random();
 
     PostRequestSender ps;
+    PhoneNumberSeeker seeker;
 
-    DBHelper helper;
+    ConnectionDetector cd;
 
     public static int code;
     public static String number;
@@ -79,33 +81,37 @@ public class CheckPhoneNumberActivity extends AppCompatActivity
 
                 VerificationCodeActivity.codeVerifying = String.valueOf(code);
 
-                // ЕСЛИ НОМЕР УЖЕ ИСПОЛЬЗУЕТСЯ
-                helper = new DBHelper(this);
-                SQLiteDatabase database = helper.getWritableDatabase();
-
-                String selection = "phone = ?";
-                String[] selectionArgs = new String[] { mInputNumber.getText().toString() };
-                Cursor cursor = database.query(DBHelper.TABLE_CONTACTS, new String[] { DBHelper.KEY_ID },
-                        selection, selectionArgs, null, null, null);
-                if (cursor.moveToFirst())
+                cd = new ConnectionDetector(this);
+                if (cd.isConnected())   // если смартфон подключен к интернету
                 {
-                    Toast toast = Toast.makeText(this, "This phone number is already taken", Toast.LENGTH_LONG);
-                    toast.show();
+                    seeker = new PhoneNumberSeeker();
+                    seeker.execute(number);    // совершается поиск в БД введенного номера телефона
 
-                    cursor.close();
-                    database.close();
+                    try
+                    {
+                        if (!seeker.get())   // если данный номер имеется в БД
+                        {
+                            Toast.makeText(this, "This phone number is already taken", Toast.LENGTH_LONG).show();
+                        }
+                        else    // если же нет
+                        {
+                            VerificationCodeActivity.entered_phone = mInputNumber.getText().toString();
+
+                            ps = new PostRequestSender();
+                            ps.execute();
+
+                            Intent intent = new Intent(this, VerificationCodeActivity.class);
+                            startActivity(intent);
+                        }
+                    }
+                    catch (InterruptedException |ExecutionException e)
+                    {
+                        e.printStackTrace();
+                    }
                 }
                 else
                 {
-                    VerificationCodeActivity.entered_phone = mInputNumber.getText().toString();
-
-                    // TODO: в случае отсутствия интернет-соединения должен выводиться Toast с последующей отменой регистрации
-
-                    ps = new PostRequestSender();
-                    ps.execute();
-
-                    Intent intent = new Intent(this, VerificationCodeActivity.class);
-                    startActivity(intent);
+                    Toast.makeText(this, "Internet connection required", Toast.LENGTH_LONG).show();
                 }
 
                 return true;
@@ -117,7 +123,7 @@ public class CheckPhoneNumberActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    class PostRequestSender extends AsyncTask<String, Void, Void>
+    static class PostRequestSender extends AsyncTask<String, Void, Void>
     {
         @Override
         protected void onPreExecute()
@@ -128,7 +134,6 @@ public class CheckPhoneNumberActivity extends AppCompatActivity
         @Override
         protected Void doInBackground(String... strings)
         {
-
             HttpRequest request = HttpRequest.post("https://sms.ru/sms/send");
             request.part("api_id", "73F8F961-A9EE-1F6E-DB2B-B6E3FCAED43C");
             request.part("to", number);
@@ -146,6 +151,22 @@ public class CheckPhoneNumberActivity extends AppCompatActivity
         protected void onPostExecute(Void aVoid)
         {
             super.onPostExecute(aVoid);
+        }
+    }
+
+    static class PhoneNumberSeeker extends AsyncTask<String, Void, Boolean>
+    {
+        @Override
+        protected Boolean doInBackground(String... strings)
+        {
+            HttpRequest request = HttpRequest.get("http://95.85.19.194/contacts/find_by_phone/" + strings[0]);
+            return request.body().equals("null"); // true - такого номера в БД нет, false - есть
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean)
+        {
+            super.onPostExecute(aBoolean);
         }
     }
 }

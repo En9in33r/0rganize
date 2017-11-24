@@ -33,9 +33,6 @@ public class MainActivity extends AppCompatActivity
     SharedPreferences sharedPreferencesLogin;
     SharedPreferences.Editor editorLogin;
 
-    // SharedPreferences sharedPreferencesLogin;
-    // SharedPreferences.Editor editorLogin;
-
     public static String login_bridge;
 
     public static String check_for_login = "";
@@ -88,7 +85,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        login_view = navigationView.getHeaderView(0).findViewById(R.id.textViewLogin); // <======== IS HERE
+        login_view = navigationView.getHeaderView(0).findViewById(R.id.textViewLogin);
 
         String a = loadLogin();
         login_view.setText(a);
@@ -102,6 +99,8 @@ public class MainActivity extends AppCompatActivity
         transaction.commit();
 
         CurrentTasksFragment.current_login = login_view.getText().toString();
+        FailedTasksFragment.current_login = login_view.getText().toString();
+        CancelTheTaskDialog.current_login = login_view.getText().toString();
     }
 
     @Override
@@ -135,9 +134,10 @@ public class MainActivity extends AppCompatActivity
 
             case R.id.action_logout:
                 CheckActivity.activity = "fromMainActivitytoAuthActivity";
+                CurrentTasksFragment.data.clear();
+                FailedTasksFragment.failedTasksData.clear();
 
                 eraseLogin();
-                // eraseLogin();
                 login_view.setText(""); // наверное, это лишнее, но пусть будет)
 
                 Intent intent = new Intent(this, CheckActivity.class);

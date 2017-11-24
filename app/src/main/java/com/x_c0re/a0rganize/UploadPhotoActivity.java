@@ -1,11 +1,13 @@
 package com.x_c0re.a0rganize;
 
-import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
-
 import com.steelkiwi.cropiwa.CropIwaView;
 import com.steelkiwi.cropiwa.config.CropIwaSaveConfig;
 
@@ -15,28 +17,48 @@ public class UploadPhotoActivity extends AppCompatActivity
 
     public static String login_registration;
 
+    public static Bitmap loaded_image;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload_photo);
 
-        cropIwaView = (CropIwaView)findViewById(R.id.cropView);
-        // cropIwaView.setImage();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle("Crop avatar");
+
+        cropIwaView = findViewById(R.id.cropView);
+        cropIwaView.setImage(loaded_image);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        getMenuInflater().inflate(R.menu.top_right_start_mission_button, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId())
+        {
+            case (R.id.start_mission_button):
+
+
+                return true;
+            case (android.R.id.home):
+                this.finish();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     public void onClick(View view)
     {
-        CheckActivity.activity = "fromAuthActivitytoMainActivity";
-        CheckActivity.loginS = login_registration;
 
-        MainActivity.check_for_login = "moved";
-        MainActivity.login_bridge = login_registration;
-
-        Intent intent = new Intent(this, CheckActivity.class);
-        startActivity(intent);
-
-        Toast toast = Toast.makeText(this, "Welcome, " + login_registration + "!", Toast.LENGTH_LONG);
-        toast.show();
     }
 }
