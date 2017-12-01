@@ -12,6 +12,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,8 +20,11 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.github.kevinsawicki.http.HttpRequest;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageActivity;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,13 +32,18 @@ import java.net.URI;
 
 public class CropOrSkipActivity extends AppCompatActivity
 {
-    FloatingActionButton fab;
+    public static String login_registration;
 
-    private int GALLERY = 1;
+    public static Bitmap cropped_image;
+    public static Uri cropped_image_uri;
+    public static int access_code;
+
+    FloatingActionButton fab;
 
     ImageView avatar;
 
     CreateAccount ca;
+    CreateAccountWithAvatar cawa;
     ConnectionDetector cd;
 
     @Override
@@ -65,9 +74,9 @@ public class CropOrSkipActivity extends AppCompatActivity
                                 switch (which)
                                 {
                                     case 0:
-                                        Intent intent = new Intent(Intent.ACTION_PICK);
-                                        intent.setType("image/*");
-                                        startActivityForResult(intent, GALLERY);
+                                        UploadPhotoActivity.value = 228;
+                                        Intent intent = new Intent(CropOrSkipActivity.this, UploadPhotoActivity.class);
+                                        startActivity(intent);
                                         break;
                                     case 1:
 
@@ -80,34 +89,18 @@ public class CropOrSkipActivity extends AppCompatActivity
         });
 
         avatar = findViewById(R.id.imageView);
+
+        if (access_code == 123)
+        {
+            avatar.setImageBitmap(cropped_image);
+        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode)
-        {
-            case 1:
-                try
-                {
-                    final Uri imageURI = data.getData();
-                    final InputStream imageStream = getContentResolver().openInputStream(imageURI);
 
-                    /* Bitmap bitmap = BitmapFactory.decodeStream(imageStream);
-                    avatar.setImageBitmap(bitmap); */
-
-                    UploadPhotoActivity.loaded_image = BitmapFactory.decodeStream(imageStream);
-                    Intent intent = new Intent(this, UploadPhotoActivity.class);
-                    startActivity(intent);
-
-                }
-                catch (FileNotFoundException e)
-                {
-                    e.printStackTrace();
-                }
-                break;
-        }
     }
 
     @Override
@@ -126,27 +119,41 @@ public class CropOrSkipActivity extends AppCompatActivity
                 cd = new ConnectionDetector(this);
                 if (cd.isConnected())
                 {
-                    cd = new ConnectionDetector(this);
-                    ca = new CreateAccount();
-                    ca.execute(VerificationCodeActivity.entered_name,
-                            VerificationCodeActivity.entered_surname,
-                            VerificationCodeActivity.entered_login,
-                            VerificationCodeActivity.entered_password,
-                            VerificationCodeActivity.entered_phone);
 
-                    UploadPhotoActivity.login_registration = VerificationCodeActivity.entered_login;
+                    // если cropped_image_uri - null, execute() вызываем без него
+                    if (cropped_image_uri != null)
+                    {
+                        cawa = new CreateAccountWithAvatar();
+                        cawa.execute(VerificationCodeActivity.entered_name,
+                                VerificationCodeActivity.entered_surname,
+                                VerificationCodeActivity.entered_login,
+                                VerificationCodeActivity.entered_password,
+                                VerificationCodeActivity.entered_phone,
+                                cropped_image_uri.toString());
+                    }
+                    else
+                    {
+                        ca = new CreateAccount();
+                        ca.execute(VerificationCodeActivity.entered_name,
+                                VerificationCodeActivity.entered_surname,
+                                VerificationCodeActivity.entered_login,
+                                VerificationCodeActivity.entered_password,
+                                VerificationCodeActivity.entered_phone);
+                    }
+
+                    login_registration = VerificationCodeActivity.entered_login;
 
                     CheckActivity.activity = "fromAuthActivitytoMainActivity";
-                    CheckActivity.loginS = UploadPhotoActivity.login_registration;
+                    CheckActivity.loginS = login_registration;
 
                     MainActivity.check_for_login = "moved";
-                    MainActivity.login_bridge = UploadPhotoActivity.login_registration;
+                    MainActivity.login_bridge = login_registration;
 
                     Intent intent = new Intent(CropOrSkipActivity.this, CheckActivity.class);
                     startActivity(intent);
 
                     Toast toast = Toast.makeText(CropOrSkipActivity.this,
-                            "Welcome, " + UploadPhotoActivity.login_registration + "!", Toast.LENGTH_LONG);
+                            "Welcome, " + login_registration + "!", Toast.LENGTH_LONG);
                     toast.show();
                 }
                 else
@@ -157,7 +164,10 @@ public class CropOrSkipActivity extends AppCompatActivity
 
                 return true;
             case (android.R.id.home):
-                this.finish();
+                VerificationCodeActivity.codeVerifying = null;
+                Intent intent = new Intent(this, CheckPhoneNumberActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
                 return true;
         }
 
@@ -169,13 +179,37 @@ public class CropOrSkipActivity extends AppCompatActivity
         @Override
         protected Void doInBackground(String... strings)
         {
-            HttpRequest request = HttpRequest.post("http://95.85.19.194/contacts");
+            HttpRequest request = HttpRequest.post("http://95.85.19.194/contacts/");
             request.part("name", strings[0]);
             request.part("surname", strings[1]);
             request.part("login", strings[2]);
             request.part("password", strings[3]);
             request.part("phone", strings[4]);
-            // тут должна быть строчка про аватар - если пользователь выбрал изображение, то оно будет загружено
+            request.part("rating", 1);
+            request.part("virginity", "true");
+
+            int status = request.code();
+            if (status == 200)
+            {
+                System.out.println(request.body());
+            }
+
+            return null;
+        }
+    }
+
+    static class CreateAccountWithAvatar extends AsyncTask<String, Void, Void>
+    {
+        @Override
+        protected Void doInBackground(String... strings)
+        {
+            HttpRequest request = HttpRequest.post("http://95.85.19.194/contacts/");
+            request.part("name", strings[0]);
+            request.part("surname", strings[1]);
+            request.part("login", strings[2]);
+            request.part("password", strings[3]);
+            request.part("phone", strings[4]);
+            request.part("avatar", strings[5]);
             request.part("rating", 1);
             request.part("virginity", "true");
 

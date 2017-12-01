@@ -11,10 +11,4 @@
     diagonal:diagonal_direction="left"
     diagonal:diagonal_position="bottom">
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:src="@color/cropiwa_default_grid_color"/>
-
 </com.github.florent37.diagonallayout.DiagonalLayout>

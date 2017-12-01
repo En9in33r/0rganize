@@ -1,23 +1,19 @@
 package com.x_c0re.a0rganize;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import com.steelkiwi.cropiwa.CropIwaView;
-import com.steelkiwi.cropiwa.config.CropIwaSaveConfig;
+
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 public class UploadPhotoActivity extends AppCompatActivity
 {
-    CropIwaView cropIwaView;
-
-    public static String login_registration;
-
-    public static Bitmap loaded_image;
+    public static int value;
+    private CropImageView mCropImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -29,8 +25,26 @@ public class UploadPhotoActivity extends AppCompatActivity
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle("Crop avatar");
 
-        cropIwaView = findViewById(R.id.cropView);
-        cropIwaView.setImage(loaded_image);
+        if (value == 228) // после перехода от CropOrSkipActivity
+        {
+            Intent intent = new Intent(Intent.ACTION_PICK);
+            intent.setType("image/*");
+            startActivityForResult(intent, 1);
+        }
+
+        mCropImageView = findViewById(R.id.cropImageView);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1)       // после возвращения от галереи
+        {
+            final Uri imageURI = data.getData();
+            CropOrSkipActivity.cropped_image_uri = imageURI;
+            mCropImageView.setImageUriAsync(imageURI);
+        }
     }
 
     @Override
@@ -46,7 +60,13 @@ public class UploadPhotoActivity extends AppCompatActivity
         switch (item.getItemId())
         {
             case (R.id.start_mission_button):
+                // обрезка фото и его сохранение, переход в CropOrSkipActivity
+                CropOrSkipActivity.cropped_image = mCropImageView.getCroppedImage();
+                CropOrSkipActivity.access_code = 123;
 
+                Intent intent = new Intent(this, CropOrSkipActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
 
                 return true;
             case (android.R.id.home):
@@ -57,8 +77,5 @@ public class UploadPhotoActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    public void onClick(View view)
-    {
 
-    }
 }

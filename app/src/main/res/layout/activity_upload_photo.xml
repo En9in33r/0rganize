@@ -1,23 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.x_c0re.a0rganize.UploadPhotoActivity">
 
-    <com.steelkiwi.cropiwa.CropIwaView
-        android:id="@+id/cropView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@drawable/default_image"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:ci_crop_shape="oval"
-        app:ci_aspect_ratio_w="9"
-        app:ci_aspect_ratio_h="9"/>
+    <com.theartofdev.edmodo.cropper.CropImageView
+        xmlns:custom="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/cropImageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        custom:cropMinCropResultWidthPX="300"
+        custom:cropMinCropResultHeightPX="300"
+        custom:cropShape="oval"
+        custom:cropFixAspectRatio="true"/>
 
 </android.support.constraint.ConstraintLayout>

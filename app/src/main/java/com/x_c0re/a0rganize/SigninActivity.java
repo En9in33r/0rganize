@@ -34,11 +34,11 @@ public class SigninActivity extends AppCompatActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Sign In");
 
-        mNameField = (EditText)findViewById(R.id.editTextName);
-        mSurnameField = (EditText)findViewById(R.id.editTextSurname);
-        mLoginField = (EditText)findViewById(R.id.editTextLogin);
-        mPasswordField = (EditText)findViewById(R.id.editTextPassword);
-        mRepeatPasswordField = (EditText)findViewById(R.id.editTextRepeatPassword);
+        mNameField = findViewById(R.id.editTextName);
+        mSurnameField = findViewById(R.id.editTextSurname);
+        mLoginField = findViewById(R.id.editTextLogin);
+        mPasswordField = findViewById(R.id.editTextPassword);
+        mRepeatPasswordField = findViewById(R.id.editTextRepeatPassword);
     }
 
     @Override

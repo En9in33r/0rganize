@@ -60,7 +60,7 @@ public class CheckPhoneNumberActivity extends AppCompatActivity
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle("Number verification");
 
-        mInputNumber = (EditText)findViewById(R.id.inputPhoneNumberField);
+        mInputNumber = findViewById(R.id.inputPhoneNumberField);
     }
 
     @Override
@@ -116,6 +116,10 @@ public class CheckPhoneNumberActivity extends AppCompatActivity
 
                 return true;
             case android.R.id.home:
+                VerificationCodeActivity.entered_login = null;
+                VerificationCodeActivity.entered_password = null;
+                VerificationCodeActivity.entered_name = null;
+                VerificationCodeActivity.entered_surname = null;
                 this.finish();
                 return true;
         }

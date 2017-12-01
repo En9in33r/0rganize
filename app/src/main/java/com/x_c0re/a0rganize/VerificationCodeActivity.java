@@ -1,19 +1,13 @@
 package com.x_c0re.a0rganize;
 
-import android.content.ContentValues;
+
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import com.github.kevinsawicki.http.HttpRequest;
 
 public class VerificationCodeActivity extends AppCompatActivity
 {
@@ -63,11 +57,12 @@ public class VerificationCodeActivity extends AppCompatActivity
                 }
                 else
                 {
-                    Toast.makeText(this, "Internet connection required", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "You've entered the wrong code!", Toast.LENGTH_LONG).show();
                 }
 
                 return true;
             case android.R.id.home:
+                VerificationCodeActivity.entered_phone = null;
                 this.finish();
                 return true;
         }

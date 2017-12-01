@@ -29,6 +29,7 @@ dependencies {
     compile 'com.android.support:design:26.+'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.github.florent37:diagonallayout:1.0.7'
-    compile 'com.steelkiwi:cropiwa:1.0.3'
+    compile 'com.theartofdev.edmodo:android-image-cropper:2.5.+'
+    compile 'de.hdodenhof:circleimageview:2.2.0'
     testCompile 'junit:junit:4.12'
 }
