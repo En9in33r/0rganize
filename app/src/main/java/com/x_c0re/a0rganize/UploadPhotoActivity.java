@@ -25,7 +25,7 @@ public class UploadPhotoActivity extends AppCompatActivity
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle("Crop avatar");
 
-        if (value == 228) // после перехода от CropOrSkipActivity
+        if (value == 228) // после перехода от CropOrSkipActivity (вход в галерею)
         {
             Intent intent = new Intent(Intent.ACTION_PICK);
             intent.setType("image/*");
@@ -41,9 +41,15 @@ public class UploadPhotoActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1)       // после возвращения от галереи
         {
-            final Uri imageURI = data.getData();
-            CropOrSkipActivity.cropped_image_uri = imageURI;
-            mCropImageView.setImageUriAsync(imageURI);
+            if (data.getData() != null)
+            {
+                final Uri imageURI = data.getData();
+                mCropImageView.setImageUriAsync(imageURI);
+            }
+            else
+            {
+                this.finish();
+            }
         }
     }
 
@@ -76,6 +82,4 @@ public class UploadPhotoActivity extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
-
-
 }

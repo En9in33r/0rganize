@@ -163,7 +163,7 @@ public class CheckPhoneNumberActivity extends AppCompatActivity
         @Override
         protected Boolean doInBackground(String... strings)
         {
-            HttpRequest request = HttpRequest.get("http://95.85.19.194/contacts/find_by_phone/" + strings[0]);
+            HttpRequest request = HttpRequest.get("http://overcome-api.herokuapp.com/contacts/find_by_phone/" + strings[0]);
             return request.body().equals("null"); // true - такого номера в БД нет, false - есть
         }
 

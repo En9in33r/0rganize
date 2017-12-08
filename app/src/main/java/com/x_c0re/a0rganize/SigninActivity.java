@@ -121,7 +121,7 @@ public class SigninActivity extends AppCompatActivity
         @Override
         protected Boolean doInBackground(String... strings)
         {
-            HttpRequest request = HttpRequest.get("http://95.85.19.194/contacts/find_by_login/" + strings[0]);
+            HttpRequest request = HttpRequest.get("http://overcome-api.herokuapp.com/contacts/find_by_login/" + strings[0]);
             return request.body().equals("null");
         }
 

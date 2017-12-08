@@ -1,15 +1,14 @@
 package com.x_c0re.a0rganize;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,33 +17,38 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
-import com.github.kevinsawicki.http.HttpRequest;
-import com.theartofdev.edmodo.cropper.CropImage;
-import com.theartofdev.edmodo.cropper.CropImageActivity;
+import org.apache.http.impl.client.HttpClients;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
+
+import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.HttpEntity;
+import cz.msebera.android.httpclient.client.HttpClient;
+import cz.msebera.android.httpclient.client.methods.HttpPost;
+import cz.msebera.android.httpclient.entity.ContentType;
+import cz.msebera.android.httpclient.entity.mime.MultipartEntityBuilder;
 
 public class CropOrSkipActivity extends AppCompatActivity
 {
     public static String login_registration;
 
     public static Bitmap cropped_image;
-    public static Uri cropped_image_uri;
     public static int access_code;
 
     FloatingActionButton fab;
 
     ImageView avatar;
-
-    CreateAccount ca;
-    CreateAccountWithAvatar cawa;
     ConnectionDetector cd;
+
+    MultipartPostSender sender;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -93,14 +97,30 @@ public class CropOrSkipActivity extends AppCompatActivity
         if (access_code == 123)
         {
             avatar.setImageBitmap(cropped_image);
+            // обрезанное фото сохранить в память и отослать на сервер multipart'ом
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+            {
+                try
+                {
+                    File f = new File(getCacheDir(), "/overcome/temp/cropped_image_temp_file.jpg");
+                    f.createNewFile();
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    cropped_image.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                    byte[] bitmap_data = baos.toByteArray();
+
+                    FileOutputStream fos = new FileOutputStream(f);
+                    fos.write(bitmap_data);
+                    fos.flush();
+                    fos.close();
+
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+
+            }
         }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        super.onActivityResult(requestCode, resultCode, data);
-
     }
 
     @Override
@@ -119,26 +139,41 @@ public class CropOrSkipActivity extends AppCompatActivity
                 cd = new ConnectionDetector(this);
                 if (cd.isConnected())
                 {
-
-                    // если cropped_image_uri - null, execute() вызываем без него
-                    if (cropped_image_uri != null)
+                    if (cropped_image != null)
                     {
-                        cawa = new CreateAccountWithAvatar();
-                        cawa.execute(VerificationCodeActivity.entered_name,
-                                VerificationCodeActivity.entered_surname,
-                                VerificationCodeActivity.entered_login,
-                                VerificationCodeActivity.entered_password,
-                                VerificationCodeActivity.entered_phone,
-                                cropped_image_uri.toString());
-                    }
-                    else
-                    {
-                        ca = new CreateAccount();
-                        ca.execute(VerificationCodeActivity.entered_name,
+                        sender = new MultipartPostSender();
+                        sender.execute(VerificationCodeActivity.entered_name,
                                 VerificationCodeActivity.entered_surname,
                                 VerificationCodeActivity.entered_login,
                                 VerificationCodeActivity.entered_password,
                                 VerificationCodeActivity.entered_phone);
+                    }
+                    else
+                    {
+                        RequestParams params = new RequestParams();
+                        params.put("name", VerificationCodeActivity.entered_name);
+                        params.put("surname", VerificationCodeActivity.entered_surname);
+                        params.put("login", VerificationCodeActivity.entered_login);
+                        params.put("password", VerificationCodeActivity.entered_password);
+                        params.put("phone", VerificationCodeActivity.entered_phone);
+                        params.put("rating", 1);
+                        params.put("virginity", true);
+
+                        AsyncHttpClient client = new AsyncHttpClient();
+                        client.post("http://overcome-api.herokuapp.com/contacts/", params, new AsyncHttpResponseHandler()
+                        {
+                            @Override
+                            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody)
+                            {
+                                Log.w("async", "Success!");
+                            }
+
+                            @Override
+                            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error)
+                            {
+                                Log.w("async", "Failure!");
+                            }
+                        });
                     }
 
                     login_registration = VerificationCodeActivity.entered_login;
@@ -174,53 +209,44 @@ public class CropOrSkipActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    static class CreateAccount extends AsyncTask<String, Void, Void>
+    public class MultipartPostSender extends AsyncTask<String, Void, Void>
     {
         @Override
         protected Void doInBackground(String... strings)
         {
-            HttpRequest request = HttpRequest.post("http://95.85.19.194/contacts/");
-            request.part("name", strings[0]);
-            request.part("surname", strings[1]);
-            request.part("login", strings[2]);
-            request.part("password", strings[3]);
-            request.part("phone", strings[4]);
-            request.part("rating", 1);
-            request.part("virginity", "true");
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            cropped_image.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] bitmap_data = baos.toByteArray();
 
-            int status = request.code();
-            if (status == 200)
+            MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+            builder.addTextBody("name", strings[0]);
+            builder.addTextBody("surname", strings[1]);
+            builder.addTextBody("login", strings[2]);
+            builder.addTextBody("password", strings[3]);
+            builder.addTextBody("phone", strings[4]);
+            builder.addTextBody("rating", "1");
+            builder.addTextBody("virginity", "true");
+
+            ContentType contentType = ContentType.create("image/jpeg");
+            String fileName = "file.jpeg";
+            builder.addBinaryBody("avatar", bitmap_data, contentType, fileName);
+
+            HttpEntity entity = builder.build();
+
+            HttpPost post = new HttpPost("http://overcome-api.herokuapp.com/contacts/");
+            post.setEntity(entity);
+
+            HttpClient client = cz.msebera.android.httpclient.impl.client.HttpClients.createDefault();
+            try
             {
-                System.out.println(request.body());
+                client.execute(post);
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
             }
 
             return null;
         }
     }
-
-    static class CreateAccountWithAvatar extends AsyncTask<String, Void, Void>
-    {
-        @Override
-        protected Void doInBackground(String... strings)
-        {
-            HttpRequest request = HttpRequest.post("http://95.85.19.194/contacts/");
-            request.part("name", strings[0]);
-            request.part("surname", strings[1]);
-            request.part("login", strings[2]);
-            request.part("password", strings[3]);
-            request.part("phone", strings[4]);
-            request.part("avatar", strings[5]);
-            request.part("rating", 1);
-            request.part("virginity", "true");
-
-            int status = request.code();
-            if (status == 200)
-            {
-                System.out.println(request.body());
-            }
-
-            return null;
-        }
-    }
-
 }
