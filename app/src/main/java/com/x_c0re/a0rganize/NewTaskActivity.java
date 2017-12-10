@@ -1,20 +1,24 @@
 package com.x_c0re.a0rganize;
 
-import android.content.ContentValues;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import cz.msebera.android.httpclient.Header;
+
 public class NewTaskActivity extends AppCompatActivity
 {
     private EditText mEnterTask;
-
-    DBHelper helper;
 
     public static String current_login;
 
@@ -24,7 +28,7 @@ public class NewTaskActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_task);
 
-        mEnterTask = (EditText)findViewById(R.id.editTaskText);
+        mEnterTask = findViewById(R.id.editTaskText);
 
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -46,15 +50,25 @@ public class NewTaskActivity extends AppCompatActivity
         {
             CurrentTasksFragment.data.clear();
 
-            helper = new DBHelper(this);
-            SQLiteDatabase db = helper.getWritableDatabase();
+            // отправка текста и имени автора на сервер
+            RequestParams params = new RequestParams();
+            params.put("text", mEnterTask.getText().toString());
+            AsyncHttpClient client = new AsyncHttpClient();
+            client.post("https://overcome-api.herokuapp.com/contacts/" + MainActivity.current_id + "/runnings",
+                    params, new AsyncHttpResponseHandler()
+                    {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody)
+                        {
+                            Log.w("async", "Success!");
+                        }
 
-            ContentValues values = new ContentValues();
-            values.put(DBHelper.KEY_AUTHOR_LOGIN, current_login);
-            values.put(DBHelper.KEY_TEXT, mEnterTask.getText().toString());
-
-            db.insert(DBHelper.TABLE_RUNNING_TASKS, null, values);
-            db.close();
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error)
+                        {
+                            Log.w("async", "Failure!");
+                        }
+                    });
 
             Toast toast = Toast.makeText(this, "Successfully!", Toast.LENGTH_LONG);
             toast.show();

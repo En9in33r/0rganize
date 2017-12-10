@@ -1,16 +1,19 @@
 package com.x_c0re.a0rganize;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.github.kevinsawicki.http.HttpRequest;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 public class FailedTasksFragment extends ListFragment
 {
@@ -18,7 +21,7 @@ public class FailedTasksFragment extends ListFragment
     FailedTasksAdapter failed_adapter;
     public static String current_login;
 
-    DBHelper helper;
+    FailedTasksFinder finder;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState)
@@ -32,28 +35,23 @@ public class FailedTasksFragment extends ListFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        helper = new DBHelper(getActivity());
-        Cursor cursor;
-        SQLiteDatabase db = helper.getWritableDatabase();
-
-        String selection = "author_login = ?";
-        String[] selection_args = new String[] { current_login };
-
-        cursor = db.query(DBHelper.TABLE_FAILED_TASKS,
-                new String[] { DBHelper.KEY_ID, DBHelper.KEY_AUTHOR_LOGIN, DBHelper.KEY_TEXT },
-                selection, selection_args, null, null, null);
-
-        if (cursor.moveToFirst())
+        try
         {
-            while (!cursor.isAfterLast())
+            finder = new FailedTasksFinder();
+            finder.execute(MainActivity.current_id);
+            String failed_tasks = finder.get();
+            GsonBuilder builder = new GsonBuilder();
+            Gson gson = builder.create();
+            FailedTaskJSON[] failedTaskJSON = gson.fromJson(failed_tasks, FailedTaskJSON[].class);
+            for (int i = 0; i <= failedTaskJSON.length - 1; i++)
             {
-                failedTasksData.add(new FailedTask(cursor.getString(cursor.getColumnIndex(DBHelper.KEY_AUTHOR_LOGIN)),
-                        cursor.getString(cursor.getColumnIndex(DBHelper.KEY_TEXT))));
-                cursor.moveToNext();
+                failedTasksData.add(new FailedTask(current_login, failedTaskJSON[i].text, 1)); // 1 - это заглушка
             }
         }
-
-        cursor.close();
+        catch (InterruptedException | ExecutionException e)
+        {
+            e.printStackTrace();
+        }
 
         return inflater.inflate(R.layout.failed_tasks_fragment, container, false);
     }
@@ -77,5 +75,16 @@ public class FailedTasksFragment extends ListFragment
     {
         failedTasksData.clear();
         super.onDetach();
+    }
+
+    private static class FailedTasksFinder extends AsyncTask<String, Void, String>
+    {
+        @Override
+        protected String doInBackground(String... strings)
+        {
+            HttpRequest request = HttpRequest.get("http://overcome-api.herokuapp.com/contacts/" + strings[0] +
+                    "/faileds");
+            return request.body();
+        }
     }
 }

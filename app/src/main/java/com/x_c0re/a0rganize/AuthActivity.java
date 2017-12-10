@@ -1,11 +1,6 @@
 package com.x_c0re.a0rganize;
 
-import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,18 +10,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.dropbox.core.android.Auth;
 import com.github.kevinsawicki.http.HttpRequest;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
-
 import java.util.concurrent.ExecutionException;
-
-import cz.msebera.android.httpclient.Header;
-
-import static java.security.AccessController.getContext;
 
 public class AuthActivity extends AppCompatActivity
 {
@@ -74,6 +59,9 @@ public class AuthActivity extends AppCompatActivity
                     {
                         if (seeker.get().contains("\"password\":\"" + password + "\""))
                         {
+                            // TODO: запретить вводить "name" в любое поле
+                            // TODO: создать еще одну shared preferences - id
+
                             CheckActivity.activity = "fromAuthActivitytoMainActivity";
                             CheckActivity.loginS = mLoginField.getText().toString();
 
@@ -133,11 +121,5 @@ public class AuthActivity extends AppCompatActivity
             super.onPostExecute(s);
         }
     }
-
-    // на вход подаются логин и пароль;
-    // выполняется поиск элемента по логину, выдается его тело
-    // в теле находится "password":"[введенный пароль]"
-    // если все верно, возвращается значение true, иначе - false
 }
-
 

@@ -2,6 +2,9 @@ package com.x_c0re.a0rganize;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -20,6 +23,15 @@ import android.view.MenuItem;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.github.kevinsawicki.http.HttpRequest;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.util.concurrent.ExecutionException;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
 {
@@ -28,7 +40,11 @@ public class MainActivity extends AppCompatActivity
 
     private TextView login_view;
 
-    private ImageButton mProfileButton;
+    private CircleImageView mProfileButton;
+
+    public final static String SAVED_TEXT = "saved_text"; // имя файла настроек
+
+    public final static String SAVED_LOGIN = "login";   // сохраненный логин
 
     SharedPreferences sharedPreferencesLogin;
     SharedPreferences.Editor editorLogin;
@@ -37,21 +53,27 @@ public class MainActivity extends AppCompatActivity
 
     public static String check_for_login = "";
 
+    public static String current_id;
+
+    FindJSONContactByLogin find;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        sharedPreferencesLogin = getSharedPreferences(SAVED_TEXT, MODE_PRIVATE);
+
         if (check_for_login.equals("moved"))
         {
             saveLogin(login_bridge);
-            // saveLogin(login_bridge);
         }
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -64,17 +86,28 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         mProfileButton = navigationView.getHeaderView(0).findViewById(R.id.avatarImage);
+
+        try
+        {
+            Glide.with(this).load(findAvatarUrl(loadLogin())).into(mProfileButton);
+        }
+        catch (InterruptedException | ExecutionException e)
+        {
+            e.printStackTrace();
+        }
+
+
         mProfileButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -106,7 +139,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onBackPressed()
     {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START))
         {
             drawer.closeDrawer(GravityCompat.START);
@@ -155,7 +188,7 @@ public class MainActivity extends AppCompatActivity
     {
         FragmentTransaction transaction = manager.beginTransaction();
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
 
         switch (item.getItemId())
         {
@@ -222,23 +255,43 @@ public class MainActivity extends AppCompatActivity
 
     public void saveLogin(String login)
     {
-        sharedPreferencesLogin = getPreferences(MODE_PRIVATE);
         editorLogin = sharedPreferencesLogin.edit();
-        editorLogin.putString("saved_text", login);
+        editorLogin.putString(SAVED_LOGIN, login);
         editorLogin.apply();
     }
 
     public String loadLogin()
     {
-        sharedPreferencesLogin = getPreferences(MODE_PRIVATE);
-        return sharedPreferencesLogin.getString("saved_text", "");
+        return sharedPreferencesLogin.getString(SAVED_LOGIN, "");
     }
 
     public void eraseLogin()
     {
-        sharedPreferencesLogin = getPreferences(MODE_PRIVATE);
         editorLogin = sharedPreferencesLogin.edit();
         editorLogin.clear();
         editorLogin.apply();
+    }
+
+    private Uri findAvatarUrl(String login) throws InterruptedException, ExecutionException
+    {
+        find = new FindJSONContactByLogin();
+        find.execute(login);
+        String avatar_json = find.get();
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+        ContactJSON json = gson.fromJson(avatar_json, ContactJSON.class);
+        String full_adress_to_avatar = "https://overcome-api.herokuapp.com" + json.avatar;
+        Uri uri = Uri.parse(full_adress_to_avatar);
+        return uri;
+    }
+
+    private static class FindJSONContactByLogin extends AsyncTask<String, Void, String>
+    {
+        @Override
+        protected String doInBackground(String... strings)
+        {
+            HttpRequest request = HttpRequest.get("http://overcome-api.herokuapp.com/contacts/find_by_login/" + strings[0]);
+            return request.body();
+        }
     }
 }

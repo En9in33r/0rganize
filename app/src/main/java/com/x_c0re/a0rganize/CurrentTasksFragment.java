@@ -1,18 +1,17 @@
 package com.x_c0re.a0rganize;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import com.github.kevinsawicki.http.HttpRequest;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
 
 public class CurrentTasksFragment extends ListFragment
 {
@@ -20,7 +19,7 @@ public class CurrentTasksFragment extends ListFragment
     CurrentTasksAdapter adapter;
 
     public static String current_login;
-    DBHelper helper;
+    RunningTasksFinder finder;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState)
@@ -34,30 +33,24 @@ public class CurrentTasksFragment extends ListFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        helper = new DBHelper(getActivity());
-        SQLiteDatabase db = helper.getWritableDatabase();
-        Cursor cursor;
-
-        String selection = "author_login = ?";
-
-        String[] selectionArgs = new String[] { current_login };
-
-        cursor = db.query(DBHelper.TABLE_RUNNING_TASKS,
-                new String[] {DBHelper.KEY_ID, DBHelper.KEY_AUTHOR_LOGIN, DBHelper.KEY_TEXT },
-                selection, selectionArgs, null, null, null);
-
-        if (cursor.moveToFirst())
+        // здесь идет добавление элементов
+        try
         {
-            while (!cursor.isAfterLast())
+            finder = new RunningTasksFinder();
+            finder.execute(MainActivity.current_id);
+            String running_tasks = finder.get();
+            GsonBuilder builder = new GsonBuilder();
+            Gson gson = builder.create();
+            CurrentTaskJSON[] currentTaskJSON = gson.fromJson(running_tasks, CurrentTaskJSON[].class);
+            for (int i = 0; i <= currentTaskJSON.length - 1; i++)
             {
-                data.add(new CurrentTask(cursor.getString(cursor.getColumnIndex(DBHelper.KEY_AUTHOR_LOGIN)),
-                        cursor.getString(cursor.getColumnIndex(DBHelper.KEY_TEXT))));
-
-                cursor.moveToNext();
+                data.add(new CurrentTask(current_login, currentTaskJSON[i].text));
             }
         }
-
-        cursor.close();
+        catch (ExecutionException | InterruptedException e)
+        {
+            e.printStackTrace();
+        }
 
         return inflater.inflate(R.layout.current_tasks_fragment, container, false);
     }
@@ -81,5 +74,16 @@ public class CurrentTasksFragment extends ListFragment
     {
         data.clear();
         super.onDetach();
+    }
+
+    private static class RunningTasksFinder extends AsyncTask<String, Void, String>
+    {
+        @Override
+        protected String doInBackground(String... strings)
+        {
+            HttpRequest request = HttpRequest.get("http://overcome-api.herokuapp.com/contacts/" + strings[0] +
+            "/runnings");
+            return request.body();
+        }
     }
 }

@@ -58,8 +58,8 @@ public class CurrentTasksAdapter extends BaseAdapter
         ((TextView)view.findViewById(R.id.textAuthorLogin)).setText(t.author_login);
         ((TextView)view.findViewById(R.id.text_element)).setText(t.text);
 
-        mFailTask = (ImageButton)view.findViewById(R.id.canselTaskButton);
-        mCompleteTask = (ImageButton)view.findViewById(R.id.completeTaskButton);
+        mFailTask = view.findViewById(R.id.canselTaskButton);
+        mCompleteTask = view.findViewById(R.id.completeTaskButton);
 
         View.OnClickListener mClickListener = new View.OnClickListener()
         {
