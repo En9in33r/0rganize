@@ -5,7 +5,7 @@ public class FailedTaskJSON
     int id;
     int contact_id;
     String text;
-    float post_rating;
+    String post_rating;
     String created_at;
     String updated_at;
 }

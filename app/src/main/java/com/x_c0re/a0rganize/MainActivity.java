@@ -132,6 +132,7 @@ public class MainActivity extends AppCompatActivity
         transaction.commit();
 
         CurrentTasksFragment.current_login = login_view.getText().toString();
+        CompletedTasksFragment.current_login = login_view.getText().toString();
         FailedTasksFragment.current_login = login_view.getText().toString();
         CancelTheTaskDialog.current_login = login_view.getText().toString();
     }

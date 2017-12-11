@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/avatarIconofFailedElement"
+            android:id="@+id/avatarIconofCompletedElement"
             android:layout_width="75dp"
             android:layout_height="75dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -29,36 +29,48 @@
             app:layout_constraintTop_toTopOf="parent"/>
 
         <TextView
-            android:id="@+id/textAuthorLogin_failed"
+            android:id="@+id/textAuthorLogin_completed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@+id/avatarIconofFailedElement"
+            app:layout_constraintStart_toEndOf="@+id/avatarIconofCompletedElement"
             app:layout_constraintTop_toTopOf="parent"/>
 
     </android.support.constraint.ConstraintLayout>
 
     <TextView
-        android:id="@+id/text_element_failed"
+        android:id="@+id/text_element_completed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:textColor="@android:color/black"
+        app:layout_constraintBottom_toTopOf="@+id/imageViewCompletedImage"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"/>
 
+    <ImageView
+        android:id="@+id/imageViewCompletedImage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:paddingBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/textViewCompletedRating"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
     <TextView
-        android:id="@+id/postRatingTextView"
+        android:id="@+id/textViewCompletedRating"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_element_failed"/>
+        app:layout_constraintEnd_toEndOf="parent"/>
+
 
 </android.support.constraint.ConstraintLayout>

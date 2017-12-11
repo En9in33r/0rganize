@@ -1,6 +1,8 @@
 package com.x_c0re.a0rganize;
 
 import android.content.Context;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +11,15 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.github.kevinsawicki.http.HttpRequest;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class CurrentTasksAdapter extends BaseAdapter
 {
@@ -18,6 +28,10 @@ public class CurrentTasksAdapter extends BaseAdapter
     ArrayList<CurrentTask> currentTasks;
     ImageButton mFailTask;
     ImageButton mCompleteTask;
+
+    CircleImageView mAvatar;
+
+    GetJSONBodyOfUser getJSONBodyOfUser;
 
     CurrentTasksAdapter(Context context, ArrayList<CurrentTask> currentTasks)
     {
@@ -58,6 +72,25 @@ public class CurrentTasksAdapter extends BaseAdapter
         ((TextView)view.findViewById(R.id.textAuthorLogin)).setText(t.author_login);
         ((TextView)view.findViewById(R.id.text_element)).setText(t.text);
 
+        mAvatar = view.findViewById(R.id.circleImageView);
+
+        try
+        {
+            getJSONBodyOfUser = new GetJSONBodyOfUser();
+            getJSONBodyOfUser.execute(t.author_login);
+            String json_contact = getJSONBodyOfUser.get();
+            GsonBuilder builder = new GsonBuilder();
+            Gson gson = builder.create();
+            ContactJSON contact = gson.fromJson(json_contact, ContactJSON.class);
+            String full_adress_to_avatar = "https://overcome-api.herokuapp.com" + contact.avatar;
+            Uri uri = Uri.parse(full_adress_to_avatar);
+            Glide.with(context).load(uri).into(mAvatar);
+        }
+        catch (ExecutionException | InterruptedException e)
+        {
+            e.printStackTrace();
+        }
+
         mFailTask = view.findViewById(R.id.canselTaskButton);
         mCompleteTask = view.findViewById(R.id.completeTaskButton);
 
@@ -93,5 +126,15 @@ public class CurrentTasksAdapter extends BaseAdapter
     CurrentTask getCurrentTask(int position)
     {
         return ((CurrentTask)getItem(position));
+    }
+
+    private static class GetJSONBodyOfUser extends AsyncTask<String, Void, String>
+    {
+        @Override
+        protected String doInBackground(String... strings)
+        {
+            HttpRequest request = HttpRequest.get("http://overcome-api.herokuapp.com/contacts/find_by_login/" + strings[0]);
+            return request.body();
+        }
     }
 }

@@ -45,7 +45,7 @@ public class FailedTasksFragment extends ListFragment
             FailedTaskJSON[] failedTaskJSON = gson.fromJson(failed_tasks, FailedTaskJSON[].class);
             for (int i = 0; i <= failedTaskJSON.length - 1; i++)
             {
-                failedTasksData.add(new FailedTask(current_login, failedTaskJSON[i].text, 1)); // 1 - это заглушка
+                failedTasksData.add(new FailedTask(current_login, failedTaskJSON[i].text, failedTaskJSON[i].post_rating));
             }
         }
         catch (InterruptedException | ExecutionException e)
